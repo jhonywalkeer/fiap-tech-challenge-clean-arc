@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "outDir": "./dist",
+    "target": "es6",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "strictPropertyInitialization": false,
+    "allowJs": true,
+    "removeComments": true,
+    "resolveJsonModule": true,
+    "paths": {
+      "@docs/*": ["docs/*"],
+      "@application/*": ["src/application/*"],
+      "@common/*": ["src/common/*"],
+      "@domain/*": ["src/domain/*"],
+      "@infrastructure/*": ["src/infrastructure/*"],
+      "@main/*": ["src/main/*"],
+      "@presentation/*": ["src/presentation/*"],
+    }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules"]
+}

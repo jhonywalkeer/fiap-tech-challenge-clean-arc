@@ -1,0 +1,1731 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "FIAP Tech Challenge #01",
+    "description": "Esta API foi desenvolvida para ajudar lanchonetes e restaurantes a gerenciar de forma eficiente os pedidos dos clientes, automatizando o processo de pedidos e integrando-os diretamente com a cozinha e o sistema de estoque. Através desta API, você pode implementar um sistema de autoatendimento que melhora a experiência do cliente, reduz erros e aumenta a eficiência operacional.",
+    "contact": {
+      "name": "Jhony Walker",
+      "url": "https://github.com/jhonywalkeer"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    },
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000"
+    }
+  ],
+  "paths": {
+    "/users": {
+      "post": {
+        "tags": ["Usuários"],
+        "summary": "Cria um novo usuário",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUser"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Usuário criado com sucesso na base dados",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestException"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Já existe um usuário cadastrado com o CPF",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConflicException"
+                }
+              }
+            }
+          },
+
+          "500": {
+            "description": "Erro interno no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Usuários"],
+        "summary": "Retorna uma lista de usuários",
+        "responses": {
+          "200": {
+            "description": "Lista de usuários retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindAllUsers"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{cpf}": {
+      "get": {
+        "tags": ["Usuários"],
+        "summary": "Retorna um usuário pelo CPF",
+        "parameters": [
+          {
+            "name": "cpf",
+            "in": "path",
+            "required": true,
+            "description": "CPF do usuário que deseja consultar",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Usuário retornado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestException"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Usuário não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundException"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories": {
+      "post": {
+        "tags": ["Categorias"],
+        "summary": "Cria uma nova categoria",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCategory"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Categoria criada com sucesso na base dados",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestException"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Já existe uma categoria cadastrada com o nome",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConflicException"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Categorias"],
+        "summary": "Retorna uma lista de categorias",
+        "responses": {
+          "200": {
+            "description": "Lista de categorias retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/categories/{category_id}": {
+      "get": {
+        "tags": ["Categorias"],
+        "summary": "Retorna uma categoria pelo ID",
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "required": true,
+            "description": "Nome da categoria que deseja consultar",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Categoria retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestException"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Categoria não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundException"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Categorias"],
+        "summary": "Atualiza uma categoria pelo ID",
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "required": true,
+            "description": "ID da categoria que deseja atualizar",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategory"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Categoria atualizada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestException"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Categoria não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundException"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Categorias"],
+        "summary": "Atualiza propriedades especificas de uma categoria pelo ID",
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "required": true,
+            "description": "ID da categoria que deseja atualizar",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateCategory"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Categoria atualizada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Category"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestException"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Categoria não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundException"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Categorias"],
+        "summary": "Deleta uma categoria pelo ID",
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "required": true,
+            "description": "ID da categoria que deseja deletar",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Categoria deletada com sucesso"
+          },
+          "204": {
+            "description": "Categoria já deletada ou inexistente"
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestException"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products": {
+      "post": {
+        "tags": ["Produtos"],
+        "summary": "Cria um novo produto",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProduct"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Produto criado com sucesso na base dados",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestException"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Categoria não encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundException"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Já existe um produto cadastrado com o nome",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConflicException"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Produtos"],
+        "summary": "Retorna uma lista de produtos",
+        "responses": {
+          "200": {
+            "description": "Lista de produtos retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindAllProducts"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Produtos não encontrados",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundException"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{product_id}": {
+      "get": {
+        "tags": ["Produtos"],
+        "summary": "Retorna um produto pelo ID",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "description": "ID do produto que deseja consultar",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Produto retornado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestException"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Produto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundException"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Produtos"],
+        "summary": "Atualiza um produto pelo ID",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "description": "ID do produto que deseja atualizar",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProduct"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Produto atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestException"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Produto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundException"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Produtos"],
+        "summary": "Atualiza propriedades especificas de um produto pelo ID",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "description": "ID do produto que deseja atualizar",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProduct"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Produto atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Product"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestException"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Produto não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundException"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Produtos"],
+        "summary": "Deleta um produto pelo ID",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "description": "ID do produto que deseja deletar",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Produto deletado com sucesso"
+          },
+          "204": {
+            "description": "Produto já deletado ou inexistente"
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestException"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders": {
+      "post": {
+        "tags": ["Pedidos"],
+        "summary": "Cria um novo usuário",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrder"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Pedido criado com sucesso na base dados",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestException"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["Pedidos"],
+        "summary": "Retorna uma lista de pedidos",
+        "responses": {
+          "200": {
+            "description": "Lista de produtos retornada com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FindAllOrders"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pedidos não encontrados",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundException"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/orders/{order_id}": {
+      "get": {
+        "tags": ["Pedidos"],
+        "summary": "Retorna um pedido pelo ID",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "description": "ID do pedido que deseja consultar",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Pedido retornado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestException"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Pedido não encontrado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/NotFoundException"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Pedidos"],
+        "summary": "Atualiza um pedido pelo ID",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "description": "ID do pedido que deseja atualizar",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOrder"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pedido Atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Pedidos"],
+        "summary": "Atualiza propriedades especificas de um pedidos pelo ID",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "description": "ID do pedido que deseja atualizar",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateOrder"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pedido Atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Pedidos"],
+        "summary": "Deleta um pedido pelo ID",
+        "parameters": [
+          {
+            "name": "product_id",
+            "in": "path",
+            "required": true,
+            "description": "ID do pedido que deseja deletar",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Pedido deletado com sucesso"
+          },
+          "204": {
+            "description": "Pedido já deletado ou inexistente"
+          },
+          "400": {
+            "description": "Requisição inválida",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequestException"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Erro interno no servidor",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InternalServerError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/payments/{payment_id}": {
+      "put": {
+        "tags": ["Pagamentos"],
+        "summary": "Atualiza um pagamento pelo ID",
+        "parameters": [
+          {
+            "name": "payment_id",
+            "in": "path",
+            "required": true,
+            "description": "ID do pagamento que deseja atualizar",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePayment"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Pagamento Atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Payment"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Identificador único do usuário do tipo CUID (Custom Unique Identifier)",
+            "example": "clwp89y4k000013ebenzg54rw"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nome do usuário que será cadastrado no sistema",
+            "example": "Jhony Walker"
+          },
+          "social_security_number": {
+            "type": "string",
+            "description": "CPF do usuário que será cadastrado no sistema (somente números)",
+            "example": "12345678900"
+          },
+          "email": {
+            "type": "string",
+            "description": "E-mail do usuário que será cadastrado no sistema",
+            "example": "jhony@fiap.com"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Data e hora de criação do usuário no sistema ( formato ISO 8601 )",
+            "example": "2021-09-01T12:00:00Z"
+          }
+        }
+      },
+      "CreateUser": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nome do usuário que será cadastrado no sistema",
+            "example": "Jhony Walker"
+          },
+          "social_security_number": {
+            "type": "string",
+            "description": "CPF do usuário que será cadastrado no sistema (somente números)",
+            "example": "12345678900"
+          },
+          "email": {
+            "type": "string",
+            "description": "E-mail do usuário que será cadastrado no sistema",
+            "example": "jhony@fiap.com"
+          }
+        }
+      },
+      "FindAllUsers": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          }
+        }
+      },
+      "Category": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Identificador único do usuário do tipo CUID (Custom Unique Identifier)",
+            "example": "clwp89y4k000013ebenzg54rw"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nome da categoria que será cadastrada no sistema",
+            "example": "Bebidas"
+          },
+          "description": {
+            "type": "string",
+            "description": "Refrescante e saborosa para qualquer ocasião",
+            "example": "Bebidas alcoólicas e não alcoólicas"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Data e hora de criação da categoria no sistema ( formato ISO 8601 )",
+            "example": "2021-09-01T12:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "Data e hora de atualização da categoria no sistema ( formato ISO 8601 )",
+            "example": "2021-09-01T12:00:00Z"
+          }
+        }
+      },
+      "CreateCategory": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nome da categoria que será cadastrada no sistema",
+            "example": "Bebidas"
+          },
+          "description": {
+            "type": "string",
+            "description": "Refrescante e saborosa para qualquer ocasião",
+            "example": "Bebidas alcoólicas e não alcoólicas"
+          }
+        }
+      },
+      "UpdateCategory": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nome da categoria que será atualizada no sistema",
+            "example": "Bebidas"
+          },
+          "description": {
+            "type": "string",
+            "description": "Refrescante e saborosa para qualquer ocasião",
+            "example": "Bebidas alcoólicas e não alcoólicas"
+          }
+        }
+      },
+      "Product": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Identificador único do produto do tipo CUID (Custom Unique Identifier)",
+            "example": "clwp89y4k000013ebenzg54rw"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nome do produto que será cadastrado no sistema",
+            "example": "Coca-Cola"
+          },
+          "description": {
+            "type": "string",
+            "description": "Refrescante e saborosa para qualquer ocasião",
+            "example": "Bebida gaseificada"
+          },
+          "price": {
+            "type": "number",
+            "description": "Preço do produto que será cadastrado no sistema",
+            "example": 5.0
+          },
+          "category_id": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Identificador único da categoria do produto do tipo CUID (Custom Unique Identifier)",
+                "example": "clwp89y4k000013ebenzg54rw"
+              },
+              "name": {
+                "type": "string",
+                "description": "Nome da categoria que será cadastrada no sistema",
+                "example": "Bebidas"
+              },
+              "description": {
+                "type": "string",
+                "description": "Refrescante e saborosa para qualquer ocasião",
+                "example": "Bebidas alcoólicas e não alcoólicas"
+              }
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Data e hora de criação do produto no sistema ( formato ISO 8601 )",
+            "example": "2021-09-01T12:00:00Z"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "Data e hora de atualização do produto no sistema ( formato ISO 8601 )",
+            "example": "2021-09-01T12:00:00Z"
+          }
+        }
+      },
+      "CreateProduct": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nome do produto que será cadastrado no sistema",
+            "example": "Coca-Cola"
+          },
+          "description": {
+            "type": "string",
+            "description": "Refrescante e saborosa para qualquer ocasião",
+            "example": "Bebida gaseificada"
+          },
+          "price": {
+            "type": "number",
+            "description": "Preço do produto que será cadastrado no sistema",
+            "example": 5.0
+          },
+          "category_id": {
+            "type": "string",
+            "description": "Identificador único da categoria do produto do tipo CUID (Custom Unique Identifier)",
+            "example": "clwp89y4k000013ebenzg54rw"
+          }
+        }
+      },
+      "FindAllProducts": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Product"
+            }
+          }
+        }
+      },
+      "UpdateProduct": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Nome do produto que será cadastrado no sistema",
+            "example": "Coca-Cola"
+          },
+          "description": {
+            "type": "string",
+            "description": "Refrescante e saborosa para qualquer ocasião",
+            "example": "Bebida gaseificada"
+          },
+          "price": {
+            "type": "number",
+            "description": "Preço do produto que será cadastrado no sistema",
+            "example": 5.0
+          },
+          "category_id": {
+            "type": "string",
+            "description": "Identificador único da categoria do produto do tipo CUID (Custom Unique Identifier)",
+            "example": "clwp89y4k000013ebenzg54rw"
+          }
+        }
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Identificador único do pedido do tipo CUID (Custom Unique Identifier)",
+            "example": "clwp89y4k000013ebenzg54rw"
+          },
+          "order": {
+            "type": "string",
+            "description": "Identificador único do pedido do tipo customizado",
+            "example": "PE-001"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status do pedido",
+            "example": "Aguardando pagamento"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "product_id": {
+                  "type": "string",
+                  "description": "Identificador único do produto do tipo CUID (Custom Unique Identifier)",
+                  "example": "clwp89y4k000013ebenzg54rw"
+                },
+                "name": {
+                  "type": "string",
+                  "description": "Nome do produto",
+                  "example": "Sunday"
+                },
+                "price": {
+                  "type": "number",
+                  "description": "Nome do produto",
+                  "example": 1
+                },
+                "quantity": {
+                  "type": "number",
+                  "description": "Quantidade do produto que será adicionado ao pedido",
+                  "example": 2
+                },
+                "amount": {
+                  "type": "number",
+                  "description": "Valor total do produto",
+                  "example": 2
+                }
+              }
+            }
+          },
+          "customer": {
+            "type": "string",
+            "description": "Nome do cliente que realizou o pedido",
+            "example": "Jhony Walker"
+          },
+          "observations": {
+            "type": "string",
+            "description": "Observações adicionais do pedido",
+            "example": "Sem gelo"
+          },
+          "payment": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string",
+                "description": "Identificador único do pagamento do tipo CUID (Custom Unique Identifier)",
+                "example": "clwp89y4k000013ebenzg54rw"
+              },
+              "payment_method": {
+                "type": "string",
+                "description": "Método de pagamento do pedido",
+                "example": "Dinheiro"
+              },
+              "amount": {
+                "type": "number",
+                "description": "valor total do pedido",
+                "example": 5.0
+              },
+              "order_id": {
+                "type": "string",
+                "description": "Identificador único do pedido do tipo customizado",
+                "example": "PE-001"
+              },
+              "payment_date": {
+                "type": "string",
+                "description": "Data e hora de pagamento do pedido no sistema ( formato ISO 8601 )",
+                "example": "2021-09-01T12:00:00Z"
+              },
+              "status": {
+                "type": "string",
+                "description": "Status do pagamento",
+                "example": "Aprovado"
+              },
+              "qr_code": {
+                "type": "string",
+                "description": "Código QR para pagamento do pedido",
+                "example": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKQAAACkCAYAAAAZtYVBAAAAAklEQVR4AewaftIAAAYySURBVO3BQY4cSRLAQDLQ/"
+              }
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Data e hora de criação do pedido no sistema ( formato ISO 8601 )",
+            "example": "2021-09-01T12:00:00Z"
+          }
+        }
+      },
+      "CreateOrder": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "product_id": {
+                  "type": "string",
+                  "description": "Identificador único do produto do tipo CUID (Custom Unique Identifier)",
+                  "example": "clwp89y4k000013ebenzg54rw"
+                },
+                "quantity": {
+                  "type": "number",
+                  "description": "Quantidade do produto que será adicionado ao pedido",
+                  "example": 2
+                }
+              }
+            }
+          },
+          "observations": {
+            "type": "string",
+            "description": "Observações adicionais do pedido",
+            "example": "Sem gelo"
+          },
+          "payment": {
+            "type": "object",
+            "properties": {
+              "method": {
+                "type": "string",
+                "description": "Método de pagamento do pedido",
+                "example": "Dinheiro"
+              },
+              "change": {
+                "type": "number",
+                "description": "Troco do pagamento do pedido",
+                "example": 5.0
+              }
+            }
+          }
+        }
+      },
+      "FindAllOrders": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Order"
+            }
+          }
+        }
+      },
+      "UpdateOrder": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "product_id": {
+                  "type": "string",
+                  "description": "Identificador único do produto do tipo CUID (Custom Unique Identifier)",
+                  "example": "clwp89y4k000013ebenzg54rw"
+                },
+                "quantity": {
+                  "type": "number",
+                  "description": "Quantidade do produto que será adicionado ao pedido",
+                  "example": 2
+                }
+              }
+            }
+          },
+          "observations": {
+            "type": "string",
+            "description": "Observações adicionais do pedido",
+            "example": "Sem gelo"
+          },
+          "payment": {
+            "type": "object",
+            "properties": {
+              "method": {
+                "type": "string",
+                "description": "Método de pagamento do pedido",
+                "example": "Dinheiro"
+              },
+              "change": {
+                "type": "number",
+                "description": "Troco do pagamento do pedido",
+                "example": 5.0
+              }
+            }
+          }
+        }
+      },
+      "Payment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Identificador único do pagamento do tipo CUID (Custom Unique Identifier)",
+            "example": "clwp89y4k000013ebenzg54rw"
+          },
+          "order_id": {
+            "type": "string",
+            "description": "Identificador único do pedido do tipo customizado",
+            "example": "PE-001"
+          },
+          "user_id": {
+            "type": "string",
+            "description": "Identificador único do usuário do tipo CUID (Custom Unique Identifier)",
+            "example": "clwp89y4k000013ebenzg54rw"
+          },
+          "payment_method": {
+            "type": "string",
+            "description": "Método de pagamento do pedido",
+            "example": "Dinheiro"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Troco do pagamento do pedido",
+            "example": 5.0
+          },
+          "payment_date": {
+            "type": "string",
+            "description": "Data e hora de pagamento do pedido no sistema ( formato ISO 8601 )",
+            "example": "2021-09-01T12:00:00Z"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status do pagamento",
+            "example": "Aprovado"
+          },
+          "qr_code": {
+            "type": "string",
+            "description": "Código QR para pagamento do pedido",
+            "example": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAKQAAACkCAYAAAAZtYVBAAAAAklEQVR4AewaftIAAAYySURBVO3BQY4cSRLAQDLQ/"
+          }
+        }
+      },
+      "UpdatePayment": {
+        "type": "object",
+        "properties": {
+          "payment_method": {
+            "type": "string",
+            "description": "Método de pagamento do pedido",
+            "example": "Dinheiro"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Troco do pagamento do pedido",
+            "example": 5.0
+          },
+          "status": {
+            "type": "string",
+            "description": "Status do pagamento",
+            "example": "Aprovado"
+          }
+        }
+      },
+      "ConflicException": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "description": "Código de status HTTP",
+            "example": 409
+          },
+          "name": {
+            "type": "string",
+            "description": "Nome do erro que será retornado ao usuário",
+            "example": "Recurso já existe"
+          },
+          "message": {
+            "type": "string",
+            "description": "Mensagem de erro que será retornada ao usuário",
+            "example": "Recurso já existente"
+          }
+        }
+      },
+      "BadRequestException": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "description": "Código de status HTTP",
+            "example": 400
+          },
+          "name": {
+            "type": "string",
+            "description": "Nome do erro que será retornado ao usuário",
+            "example": "Requisição inválida"
+          },
+          "message": {
+            "type": "string",
+            "description": "Mensagem de erro que será retornada ao usuário",
+            "example": "O propriedade informada é inválida"
+          }
+        }
+      },
+      "NotFoundException": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "description": "Código de status HTTP",
+            "example": 404
+          },
+          "name": {
+            "type": "string",
+            "description": "Nome do erro que será retornado ao usuário",
+            "example": "Recurso não encontrado"
+          },
+          "message": {
+            "type": "string",
+            "description": "Mensagem de erro que será retornada ao usuário",
+            "example": "Recurso não encontrado"
+          }
+        }
+      },
+      "InternalServerError": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "description": "Código de status HTTP",
+            "example": 500
+          },
+          "name": {
+            "type": "string",
+            "description": "Nome do erro que será retornado ao usuário",
+            "example": "Erro interno no servidor"
+          },
+          "message": {
+            "type": "string",
+            "description": "Mensagem de erro que será retornada ao usuário",
+            "example": "Erro ao tentar criar um novo usuário"
+          },
+          "stack": {
+            "type": "string",
+            "description": "Pilha de erro que será retornada ao usuário",
+            "example": "Error: ER_DUP_ENTRY: Duplicate entry '12345678900' for key 'social_security_number'"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Usuários"
+    },
+    {
+      "name": "Categorias"
+    },
+    {
+      "name": "Produtos"
+    },
+    {
+      "name": "Pedidos"
+    },
+    {
+      "name": "Pagamentos"
+    }
+  ]
+}
