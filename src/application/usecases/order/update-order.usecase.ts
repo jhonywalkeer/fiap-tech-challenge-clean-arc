@@ -5,6 +5,7 @@ import { UpdateOrderUseCase } from '@domain/usecases/order'
 
 export class UpdateOrderUC implements UpdateOrderUseCase {
   constructor(private readonly updateOrderRepository: UpdateOrderRepository) {}
+
   async execute(pathParameters: UpdateOrderDTO): Promise<Order | null> {
     return await this.updateOrderRepository.update(pathParameters)
   }

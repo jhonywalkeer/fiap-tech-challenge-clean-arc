@@ -1,5 +1,5 @@
 import { OrderIdentifierGenerator } from '@common/utils/generators'
-import { letters, numbers } from '@common/constants'
+import { Letters, Numbers } from '@common/constants'
 
 describe('[Utils] Order Identifier Generator', () => {
   it('should return a string of length 6', () => {
@@ -14,14 +14,14 @@ describe('[Utils] Order Identifier Generator', () => {
 
   it('should return a string with the first two characters as letters', () => {
     const result = OrderIdentifierGenerator()
-    expect(letters).toContain(result.charAt(0))
-    expect(letters).toContain(result.charAt(1))
+    expect(Letters).toContain(result.charAt(0))
+    expect(Letters).toContain(result.charAt(1))
   })
 
   it('should return a string with the last three characters as numbers', () => {
     const result = OrderIdentifierGenerator()
-    expect(numbers).toContain(result.charAt(3))
-    expect(numbers).toContain(result.charAt(4))
-    expect(numbers).toContain(result.charAt(5))
+    expect(Numbers).toContain(result.charAt(3))
+    expect(Numbers).toContain(result.charAt(4))
+    expect(Numbers).toContain(result.charAt(5))
   })
 })

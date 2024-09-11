@@ -17,7 +17,10 @@ export const UpdateCategoryControllerFactory = () => {
     databaseConnection,
     findCategoryById
   )
-  const updateCategoryUseCase = new UpdateCategoryUC(categoryRepository)
+  const updateCategoryUseCase = new UpdateCategoryUC(
+    findCategoryById,
+    categoryRepository
+  )
   const genericSucessPresenter = new HttpGenericResponse<Category>()
   const updateCategoryController = new UpdateCategoryController(
     updateCategoryUseCase,

@@ -9,14 +9,16 @@ import { HttpGenericResponse } from '@presentation/protocols/http'
 
 export const DeleteCategoryControllerFactory = () => {
   const databaseConnection = new DatabaseConnection()
-  const findCategoryById = new FindCategoryByIdPrismaRepository(
+  const findCategoryByIdRepository = new FindCategoryByIdPrismaRepository(
     databaseConnection
   )
   const categoryRepository = new DeleteCategoryPrismaRepository(
-    databaseConnection,
-    findCategoryById
+    databaseConnection
   )
-  const deleteCategoryUseCase = new DeleteCategoryUC(categoryRepository)
+  const deleteCategoryUseCase = new DeleteCategoryUC(
+    findCategoryByIdRepository,
+    categoryRepository
+  )
   const genericSucessPresenter = new HttpGenericResponse<void>()
   const deleteCategoryController = new DeleteProductController(
     deleteCategoryUseCase,

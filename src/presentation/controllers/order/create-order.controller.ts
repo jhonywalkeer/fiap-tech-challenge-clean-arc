@@ -1,4 +1,4 @@
-import { CreateOrderDTO } from '@application/dtos/order'
+import { CreateOrderWithItemsDTO } from '@application/dtos/order'
 import { Order } from '@domain/entities'
 import { StatusCode } from '@domain/enums'
 import { CreateOrderUseCase } from '@domain/usecases/order'
@@ -11,9 +11,9 @@ export class CreateOrderController implements Controller<Order> {
     private readonly createOrderPresenter: ResponseHandler<Order>
   ) {}
   async handle(body: HttpRequest) {
-    const { items, observation, customer, payment } = body.body
-    const payload: CreateOrderDTO = Object.assign(
-      new CreateOrderDTO(items, payment, observation, customer)
+    const { items, customer, observation } = body.body
+    const payload: CreateOrderWithItemsDTO = Object.assign(
+      new CreateOrderWithItemsDTO(items, customer, observation)
     )
     const order: Order = await this.createOrderUC.execute(payload)
     return this.createOrderPresenter.response(order, StatusCode.Created)

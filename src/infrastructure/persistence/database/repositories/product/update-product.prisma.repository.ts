@@ -1,5 +1,5 @@
 import { UpdateProductDTO } from '@application/dtos/product'
-import { ProductMap } from '@application/mappers'
+import { ProductAndCategoryMap } from '@application/mappers'
 import { UpdateProductRepository } from '@application/repositories/product'
 import { HttpException } from '@common/utils/exceptions'
 import { Product } from '@domain/entities'
@@ -60,6 +60,6 @@ export class UpdateProductPrismaRepository implements UpdateProductRepository {
       id: update.id
     })
 
-    return ProductMap.execute(findProduct, findProduct?.category)
+    return ProductAndCategoryMap.execute(findProduct, findProduct?.category)
   }
 }

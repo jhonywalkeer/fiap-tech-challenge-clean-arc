@@ -7,6 +7,7 @@ export class FindOrderByIdUC implements FindOrderByIdUseCase {
   constructor(
     private readonly findOrderByIdRepository: FindOrderByIdRepository
   ) {}
+
   async execute(pathParameters: FindOrderByIdDTO): Promise<Order | null> {
     return await this.findOrderByIdRepository.findById(pathParameters)
   }
