@@ -1,5 +1,5 @@
 import { FindProductByIdDTO } from '@application/dtos/product'
-import { ProductMap } from '@application/mappers'
+import { ProductAndCategoryMap } from '@application/mappers'
 import { FindProductByIdRepository } from '@application/repositories/product'
 import { Product } from '@domain/entities'
 import { DatabaseConnection } from '@infrastructure/persistence/database'
@@ -16,7 +16,7 @@ export class FindProductByIdPrismaRepository
       },
       include: { category: true }
     })
-    const formatProductAndCategory = ProductMap.execute(
+    const formatProductAndCategory = ProductAndCategoryMap.execute(
       findProduct,
       findProduct?.category
     )

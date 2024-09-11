@@ -1,21 +1,30 @@
-import { CreatePaymentMethodDTO } from '@application/dtos/payment'
-import { CreateOrderItemsDTO } from '@application/dtos/order'
+import { Field } from '@domain/enums'
+import { IsStringValidator } from '@presentation/validators'
 
 export class CreateOrderDTO {
-  items: CreateOrderItemsDTO[]
-  payment: CreatePaymentMethodDTO
-  customer?: string
-  observation?: string
+  order: string
+  status: string
+  customer: string
+  user_id: string
+  payment: string
+  observation: string
 
   constructor(
-    items: CreateOrderItemsDTO[],
-    payment: CreatePaymentMethodDTO,
-    observation?: string,
-    customer?: string
+    order: string,
+    status: string,
+    customer: string,
+    user_id: string,
+    payment: string,
+    observation: string
   ) {
-    this.items = items
+    IsStringValidator(order, Field.OrderIdentifier)
+    IsStringValidator(status, Field.Status)
+
+    this.order = order
+    this.status = status
+    this.customer = customer
+    this.user_id = user_id
     this.payment = payment
     this.observation = observation
-    this.customer = customer
   }
 }

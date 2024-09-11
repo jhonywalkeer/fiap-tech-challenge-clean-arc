@@ -4,5 +4,5 @@ export const ValidEmails = [
   '@yahoo.com',
   '@outlook.com',
   '@live.com',
-  '@fiap.com'
+  '@fiap.com.br'
 ]

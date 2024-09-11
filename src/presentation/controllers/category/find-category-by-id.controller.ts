@@ -1,7 +1,6 @@
 import { FindCategoryByIdDTO } from '@application/dtos/category'
-import { HttpException } from '@common/utils/exceptions'
 import { Category } from '@domain/entities'
-import { StatusCode, ErrorName, ErrorMessage } from '@domain/enums'
+import { StatusCode } from '@domain/enums'
 import { FindCategoryByIdUseCase } from '@domain/usecases/category'
 import { Controller } from '@presentation/protocols/controller'
 import { ResponseHandler, HttpRequest } from '@presentation/protocols/http'
@@ -16,16 +15,7 @@ export class FindCategoryByIdController implements Controller<Category> {
     const parameters: FindCategoryByIdDTO = Object.assign(
       new FindCategoryByIdDTO(id)
     )
-    const category: Category | null =
-      await this.findCategoryByIdUC.execute(parameters)
-
-    if (!category) {
-      throw new HttpException(
-        StatusCode.NotFound,
-        ErrorName.NotFoundInformation,
-        ErrorMessage.CategoryNotFound
-      )
-    }
+    const category = await this.findCategoryByIdUC.execute(parameters)
 
     return this.findCategoryByIdPresenter.response(category, StatusCode.Sucess)
   }

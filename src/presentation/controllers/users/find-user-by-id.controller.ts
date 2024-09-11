@@ -1,7 +1,6 @@
 import { FindUserByIdDTO } from '@application/dtos/user'
-import { HttpException } from '@common/utils/exceptions'
 import { User } from '@domain/entities'
-import { StatusCode, ErrorName, ErrorMessage } from '@domain/enums'
+import { StatusCode } from '@domain/enums'
 import { FindUserByIdUseCase } from '@domain/usecases/user'
 import { Controller } from '@presentation/protocols/controller'
 import { ResponseHandler, HttpRequest } from '@presentation/protocols/http'
@@ -14,15 +13,7 @@ export class FindByIdController implements Controller<User> {
   async handle(pathParameters: HttpRequest) {
     const { cpf } = pathParameters.params
     const parameters: FindUserByIdDTO = Object.assign(new FindUserByIdDTO(cpf))
-    const user: User | null = await this.findUserByIdUC.execute(parameters)
-
-    if (!user) {
-      throw new HttpException(
-        StatusCode.NotFound,
-        ErrorName.NotFoundInformation,
-        ErrorMessage.UserNotFound
-      )
-    }
+    const user: User = await this.findUserByIdUC.execute(parameters)
 
     return this.findUserByIdPresenter.response(user, StatusCode.Sucess)
   }

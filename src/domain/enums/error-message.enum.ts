@@ -1,5 +1,4 @@
 export enum ErrorMessage {
-  UserExists = 'Usuário já existente',
   CategoryExists = 'Categoria já existente',
   ProductExists = 'Produto já existente',
   UserNotFound = 'Usuário filtrado não encontrado',
@@ -12,14 +11,14 @@ export enum ErrorMessage {
   CategoryNotExists = 'Categoria já deletada ou inexistente',
   ProductNotExists = 'Produto já deletado ou inexistente',
   OrderNotExists = 'Pedidos já deletado ou inexistente',
+  OrderItemNotExists = 'Item do pedido já deletado ou inexistente',
   ProductDeleted = 'Produto deletado com sucesso',
   OrderNotFound = 'Pedido não encontrado',
-  BodyInvalid = 'Body precisa ser informado corretamente',
   PaymentNotFound = 'Não foi possível atualizar o pagamento',
   PaymentMethodNotValid = 'Método de pagamento não é válido',
   EmailNotValid = 'E-mail deve ser válido (sendo incluso no mesmo um dos dominios listados: @gmail.com, @hotmail.com, @yahoo.com, @outlook.com, @live.com, @fiap.com) para que o cadastro seja efetuado',
   SocialSecurityNumberNotValid = 'CPF informado não é válido',
-  ParameterNotInvalid = 'Você deve fornecer pelo menos um parâmetro válido',
   ParametersNotValid = 'Informe os parâmetros corretamentos para a requisição',
-  PropertyNotValid = 'Valor da propriedade informada não é válida'
+  PropertyNotValid = 'Valor da propriedade informada não é válida',
+  ErrorUpdateCategory = 'Ocorreu um erro ao atualizar a categoria'
 }

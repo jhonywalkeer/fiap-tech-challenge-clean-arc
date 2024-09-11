@@ -13,9 +13,9 @@ export class UpdateOrderController implements Controller<Order> {
   ) {}
   async handle(pathParameters: HttpRequest) {
     const { id } = pathParameters.params
-    const { items, observation, customer, payment } = pathParameters.body
+    const { items, observation, customer } = pathParameters.body
     const parameters: UpdateOrderDTO = Object.assign(
-      new UpdateOrderDTO(id, items, payment, observation, customer)
+      new UpdateOrderDTO(id, items, observation, customer)
     )
     const order: Order | null = await this.updateOrderUC.execute(parameters)
 

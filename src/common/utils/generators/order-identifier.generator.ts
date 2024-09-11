@@ -1,16 +1,21 @@
-import { letters, numbers } from '@common/constants'
+import {
+  EmptyFiller,
+  SeparatorKebabCaseFiller,
+  Letters,
+  Numbers
+} from '@common/constants'
 
 export const OrderIdentifierGenerator = (): string => {
-  let result = ''
+  let result = EmptyFiller
 
   for (let i = 0; i < 2; i++) {
-    result += letters.charAt(Math.floor(Math.random() * letters.length))
+    result += Letters.charAt(Math.floor(Math.random() * Letters.length))
   }
 
-  result += '-'
+  result += SeparatorKebabCaseFiller
 
   for (let i = 0; i < 3; i++) {
-    result += numbers.charAt(Math.floor(Math.random() * numbers.length))
+    result += Numbers.charAt(Math.floor(Math.random() * Numbers.length))
   }
 
   return result

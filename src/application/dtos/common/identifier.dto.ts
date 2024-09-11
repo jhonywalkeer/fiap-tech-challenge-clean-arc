@@ -1,6 +1,7 @@
-import { StatusCode, ErrorName, ErrorMessage } from '@domain/enums'
+import { StatusCode, ErrorName } from '@domain/enums'
 import { HttpException } from '@common/utils/exceptions'
 import { SymbolsListValidator } from '@presentation/validators'
+import { ParamNotValidError } from '@common/errors/param-not-valid.error'
 
 export class IdentifierDTO {
   id: string
@@ -10,7 +11,7 @@ export class IdentifierDTO {
       throw new HttpException(
         StatusCode.BadRequest,
         ErrorName.InvalidParameters,
-        ErrorMessage.ParameterNotInvalid
+        ParamNotValidError()
       )
 
     this.id = SymbolsListValidator(id)

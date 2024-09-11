@@ -1,1 +1,5 @@
-export * from './products.map'
+export * from './create-order-with-items.map'
+export * from './create-order.map'
+export * from './order-items.map'
+export * from './order.map'
+export * from './product-and-category.map'
