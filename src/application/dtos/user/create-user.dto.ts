@@ -1,8 +1,9 @@
+import { BadRequestError } from '@common/errors'
 import { HttpException } from '@common/utils/exceptions'
-import { StatusCode, ErrorName, ErrorMessage, Field } from '@domain/enums'
+import { StatusCode, ErrorName, Field } from '@domain/enums'
 import {
   IsStringValidator,
-  EmailListValidator,
+  IsEmailValidator,
   IsSocialSecurityNumberValidator
 } from '@presentation/validators'
 
@@ -16,14 +17,14 @@ export class CreateUserDTO {
       throw new HttpException(
         StatusCode.BadRequest,
         ErrorName.InvalidBody,
-        ErrorMessage.BodyInvalid
+        BadRequestError()
       )
     }
-    IsStringValidator(email, Field.email)
-    IsStringValidator(social_security_number, Field.socialSecurityNumber)
+    IsStringValidator(email, Field.Email)
+    IsStringValidator(social_security_number, Field.SocialSecurityNumber)
 
-    this.name = IsStringValidator(name, Field.name)
-    this.email = EmailListValidator(email)
+    this.name = IsStringValidator(name, Field.Name)
+    this.email = IsEmailValidator(email)
     this.social_security_number = IsSocialSecurityNumberValidator(
       social_security_number
     )

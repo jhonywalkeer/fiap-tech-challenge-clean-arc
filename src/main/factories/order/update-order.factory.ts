@@ -5,12 +5,29 @@ import {
   FindOrderByIdPrismaRepository,
   UpdateOrderPrismaRepository
 } from '@infrastructure/persistence/database/repositories/order'
+import { FindOrderItemByConditionPrismaRepository } from '@infrastructure/persistence/database/repositories/order-item'
+import { FindPaymentByConditionPrismaRepository } from '@infrastructure/persistence/database/repositories/payment'
+import { FindProductByConditionPrismaRepository } from '@infrastructure/persistence/database/repositories/product'
 import { UpdateOrderController } from '@presentation/controllers/order'
 import { HttpGenericResponse } from '@presentation/protocols/http'
 
 export const UpdateOrderControllerFactory = () => {
   const databaseConnection = new DatabaseConnection()
-  const findOrderById = new FindOrderByIdPrismaRepository(databaseConnection)
+  const paymentRepository = new FindPaymentByConditionPrismaRepository(
+    databaseConnection
+  )
+  const orderItemRepository = new FindOrderItemByConditionPrismaRepository(
+    databaseConnection
+  )
+  const findproductRepository = new FindProductByConditionPrismaRepository(
+    databaseConnection
+  )
+  const findOrderById = new FindOrderByIdPrismaRepository(
+    databaseConnection,
+    paymentRepository,
+    orderItemRepository,
+    findproductRepository
+  )
   const orderRepository = new UpdateOrderPrismaRepository(
     databaseConnection,
     findOrderById

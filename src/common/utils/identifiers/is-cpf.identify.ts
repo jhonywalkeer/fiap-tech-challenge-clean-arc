@@ -1,9 +1,5 @@
-export const IsCpfIdentify = (value: string): boolean => {
-  if (value.length !== 11) {
-    return false
-  }
-
-  if (isNaN(Number(value.trim()))) {
+export const IsCpfIdentify = (value: string | number): boolean => {
+  if (String(value).length !== 11) {
     return false
   }
 

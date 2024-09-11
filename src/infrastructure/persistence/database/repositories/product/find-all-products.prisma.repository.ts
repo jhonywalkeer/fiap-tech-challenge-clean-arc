@@ -1,5 +1,5 @@
 import { FindAllProductsDTO } from '@application/dtos/product'
-import { ProductMap } from '@application/mappers'
+import { ProductAndCategoryMap } from '@application/mappers'
 import { FindAllProductRepository } from '@application/repositories/product'
 import { Product } from '@domain/entities'
 import { DatabaseConnection } from '@infrastructure/persistence/database'
@@ -21,7 +21,7 @@ export class FindAllProductsPrismaRepository
     })
 
     const formatProductAndCategory = findProduct.map((product) => {
-      return ProductMap.execute(product, product.category)
+      return ProductAndCategoryMap.execute(product, product.category)
     })
 
     return formatProductAndCategory

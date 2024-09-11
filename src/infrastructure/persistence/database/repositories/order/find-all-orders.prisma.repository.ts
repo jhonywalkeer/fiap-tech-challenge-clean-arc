@@ -1,13 +1,27 @@
 import { FindAllOrdersDTO } from '@application/dtos/order'
 import { FindAllOrdersRepository } from '@application/repositories/order'
 import { HttpException } from '@common/utils/exceptions'
-import { Order } from '@domain/entities'
+import { Order, Payment } from '@domain/entities'
 import { StatusCode, ErrorName, ErrorMessage } from '@domain/enums'
 import { PaymentCommunication } from '@infrastructure/gateway/payment'
 import { DatabaseConnection } from '@infrastructure/persistence/database'
+import {
+  OrderItemsSchema,
+  OrderSchema,
+  ProductWithCategorySchema
+} from '../../schemas'
+import { FindPaymentByConditionPrismaRepository } from '@infrastructure/persistence/database/repositories/payment'
+import { FindOrderItemByConditionPrismaRepository } from '@infrastructure/persistence/database/repositories/order-item'
+import { FindProductByConditionPrismaRepository } from '@infrastructure/persistence/database/repositories/product'
+import { EmptyFiller } from '@common/constants'
 
 export class FindAllOrdersPrismaRepository implements FindAllOrdersRepository {
-  constructor(private readonly prisma: DatabaseConnection) {}
+  constructor(
+    private readonly prisma: DatabaseConnection,
+    private readonly paymentRepository: FindPaymentByConditionPrismaRepository,
+    private readonly orderItemRepository: FindOrderItemByConditionPrismaRepository,
+    private readonly productRepository: FindProductByConditionPrismaRepository
+  ) {}
 
   async findAll(queryParameters: FindAllOrdersDTO): Promise<Order[] | null> {
     const page = queryParameters.page
@@ -15,7 +29,7 @@ export class FindAllOrdersPrismaRepository implements FindAllOrdersRepository {
 
     console.log(page, limit)
 
-    const findOrders = await this.prisma.order.findMany({})
+    const findOrders: OrderSchema[] = await this.prisma.order.findMany({})
     const QrCode = await PaymentCommunication()
 
     if (!findOrders || findOrders === null) {
@@ -26,47 +40,40 @@ export class FindAllOrdersPrismaRepository implements FindAllOrdersRepository {
       )
     }
 
-    const findPayments = await this.prisma.payment.findMany({
-      where: {
-        order_id: {
-          in: findOrders.map((order) => order.order)
-        }
-      }
-    })
+    const findPayments: Payment[] | null =
+      await this.paymentRepository.findByCondition({
+        order_id: findOrders.map((order) => order.id)
+      })
 
-    const findItems = await this.prisma.order_item.findMany({
-      where: {
-        order_id: {
-          in: findOrders.map((order) => order.id)
-        }
-      }
-    })
+    const findItems: OrderItemsSchema[] | null =
+      await this.orderItemRepository.findByCondition({
+        ids: findOrders.map((order) => order.id)
+      })
 
-    const findProducts = await this.prisma.product.findMany({
-      where: {
-        id: {
-          in: findItems.map((item) => item.product_id)
-        }
-      }
-    })
+    const findProducts: ProductWithCategorySchema[] | null =
+      await this.productRepository.findByCondition({
+        ids: findItems?.map((item) => item.product_id ?? EmptyFiller)
+      })
 
     const findedOrders = findOrders.map((order) => {
-      const payment = findPayments.find(
+      const payment = findPayments?.find(
         (payment) => payment.order_id === order.order
       )
 
-      const items = findItems.filter((item) => item.order_id === order.id)
+      const orderItems = findItems?.filter(
+        (orderItem) => orderItem.order_id === order.id
+      )
 
-      const products = items.map((item) => {
-        const product = findProducts.find(
-          (product) => product.id === item.product_id
+      const products = orderItems?.map((orderItem) => {
+        const product = findProducts?.find(
+          (product) => product.id === orderItem.product_id
         )
 
         return {
-          product_id: item.product_id,
+          product_id: orderItem.product_id,
           name: product?.name,
           price: product?.price,
-          quantity: item.quantity
+          quantity: orderItem.quantity
         }
       })
 
@@ -74,17 +81,29 @@ export class FindAllOrdersPrismaRepository implements FindAllOrdersRepository {
         id: order.id,
         order: order.order,
         status: order.status,
+        customer: order.customer,
+        items: orderItems?.map((orderItem) => {
+          const product = products?.find(
+            (product) => product.product_id === orderItem.product_id
+          )
+          return {
+            product_id: orderItem.product_id,
+            name: product?.name,
+            price: product?.price,
+            quantity: orderItem.quantity,
+            amount: orderItem.amount
+          }
+        }),
         payment: {
-          payment_id: payment?.id,
-          order_id: payment?.order_id,
+          id: payment?.id,
           user_id: payment?.user_id,
           payment_method: payment?.payment_method,
-          amount: payment?.amount,
-          payment_date: payment?.payment_date,
-          status: payment?.status,
-          qr_code: QrCode
+          amount: payment?.amount ?? 0,
+          qr_code: QrCode,
+          status: payment?.status
         },
-        items: products
+        observation: order.observation,
+        created_at: order.created_at
       }
     })
 

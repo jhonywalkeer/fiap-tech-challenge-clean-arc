@@ -21,9 +21,9 @@ export class UpdatePaymentDTO extends IdentifierDTO {
     this.payment_method = IsEnumValidator(
       payment_method,
       PaymentMethod,
-      Field.method
+      Field.Method
     )
-    this.amount = IsNumberValidator(amount, Field.amount)
-    this.status = IsStringValidator(status, Field.status)
+    this.amount = IsNumberValidator(amount, Field.Amount)
+    this.status = IsStringValidator(status, Field.Status)
   }
 }

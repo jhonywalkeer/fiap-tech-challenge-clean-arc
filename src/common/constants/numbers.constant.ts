@@ -1,1 +1,1 @@
-export const numbers = '0123456789'
+export const Numbers = '0123456789'

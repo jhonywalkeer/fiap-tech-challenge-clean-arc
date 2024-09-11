@@ -3,7 +3,8 @@ import { DatabaseConnection } from '@infrastructure/persistence/database'
 import { CreateCategoryDTO } from '@application/dtos/category'
 import { Category } from '@domain/entities'
 import { HttpException } from '@common/utils/exceptions'
-import { ErrorMessage, ErrorName, StatusCode } from '@domain/enums'
+import { ErrorName, Field, StatusCode } from '@domain/enums'
+import { CreateNotOccurredError } from '@common/errors'
 
 export class CreateCategoryPrismaRepository
   implements CreateCategoryRepository
@@ -11,23 +12,19 @@ export class CreateCategoryPrismaRepository
   constructor(private readonly prisma: DatabaseConnection) {}
 
   async create(body: CreateCategoryDTO): Promise<Category> {
-    const product = await this.prisma.category.findMany({
-      where: { name: body.name }
-    })
-
-    if (product.length > 0) {
+    try {
+      return await this.prisma.category.create({
+        data: {
+          name: body.name,
+          description: body.description
+        }
+      })
+    } catch (error) {
       throw new HttpException(
-        StatusCode.Conflict,
-        ErrorName.ResourceAlreadyExists,
-        ErrorMessage.CategoryExists
+        StatusCode.InternalServerError,
+        ErrorName.InternalError,
+        CreateNotOccurredError(Field.Category)
       )
     }
-
-    return this.prisma.category.create({
-      data: {
-        name: body.name,
-        description: body.description
-      }
-    })
   }
 }

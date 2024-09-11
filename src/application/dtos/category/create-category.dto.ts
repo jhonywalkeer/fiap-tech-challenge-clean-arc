@@ -1,6 +1,7 @@
 import { IsStringValidator } from '@presentation/validators'
 import { HttpException } from '@common/utils/exceptions'
-import { ErrorMessage, ErrorName, Field, StatusCode } from '@domain/enums'
+import { ErrorName, Field, StatusCode } from '@domain/enums'
+import { BadRequestError } from '@common/errors'
 
 export class CreateCategoryDTO {
   name: string
@@ -11,11 +12,11 @@ export class CreateCategoryDTO {
       throw new HttpException(
         StatusCode.BadRequest,
         ErrorName.InvalidBody,
-        ErrorMessage.BodyInvalid
+        BadRequestError()
       )
     }
 
-    this.name = IsStringValidator(name, Field.name)
-    this.description = IsStringValidator(description, Field.description)
+    this.name = IsStringValidator(name, Field.Name)
+    this.description = IsStringValidator(description, Field.Description)
   }
 }

@@ -1,5 +1,5 @@
 import { CreateProductDTO } from '@application/dtos/product'
-import { ProductMap } from '@application/mappers'
+import { ProductAndCategoryMap } from '@application/mappers'
 import { CreateProductRepository } from '@application/repositories/product'
 import { HttpException } from '@common/utils/exceptions'
 import { Product } from '@domain/entities'
@@ -40,10 +40,11 @@ export class CreateProductPrismaRepository implements CreateProductRepository {
         name: body.name,
         description: body.description,
         category_id: category.id,
-        price: body.price
+        price: body.price,
+        size: body.size
       }
     })
 
-    return ProductMap.execute(createProduct, category)
+    return ProductAndCategoryMap.execute(createProduct, category)
   }
 }

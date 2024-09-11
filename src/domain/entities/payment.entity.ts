@@ -6,7 +6,7 @@ export class Payment {
   amount?: number
   payment_date?: Date | null
   status?: string
-  qr_code?: string
+  qr_code?: string | null
 
   constructor(
     order_id?: string,
@@ -15,7 +15,7 @@ export class Payment {
     amount?: number,
     payment_date?: Date | null,
     status?: string,
-    qr_code?: string,
+    qr_code?: string | null,
     id?: string
   ) {
     this.id = id
