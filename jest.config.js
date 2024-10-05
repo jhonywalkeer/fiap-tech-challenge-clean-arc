@@ -1,9 +1,10 @@
 module.exports = {
   preset: 'ts-jest',
   roots: ['<rootDir>/src'],
-  collectCoverageFrom: ['src/**/*.ts'],
+  collectCoverageFrom: ['src/**/*.ts', 'src/**/*.js'],
   coveragePathIgnorePatterns: ['/node_modules/', 'index\\.ts$'],
   coverageDirectory: 'coverage',
+  collectCoverage: true,
   coverageProvider: 'v8',
   testEnvironment: 'node',
   transform: {

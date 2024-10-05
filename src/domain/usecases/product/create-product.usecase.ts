@@ -1,6 +1,6 @@
-import { CreateProductDTO } from '@application/dtos/product'
 import { Product } from '@domain/entities'
+import { CreateProduct } from '@domain/interfaces/product'
 
 export interface CreateProductUseCase {
-  execute(body: CreateProductDTO): Promise<Product> | never
+  execute(payload: CreateProduct): Promise<Product> | never
 }

@@ -1,6 +1,10 @@
 import { CreateOrderItemDTO } from '@application/dtos/order-item'
 import { CreateOrderItemRepository } from '@application/repositories/order-item'
+import { ErrorName, StatusCode } from '@common/enums'
+import { CreateNotOccurredError } from '@common/errors'
+import { HttpException } from '@common/utils/exceptions'
 import { OrderItem } from '@domain/entities'
+import { Field } from '@domain/enums'
 import { DatabaseConnection } from '@infrastructure/persistence/database'
 import { Prisma } from '@prisma/client'
 
@@ -20,6 +24,8 @@ export class CreateOrderItemPrismaRepository
           data: bodyArray
         })
 
+      console.info(createOrderItems)
+
       const findOrderItems: OrderItem[] = await this.prisma.order_item.findMany(
         {
           where: {
@@ -32,8 +38,11 @@ export class CreateOrderItemPrismaRepository
 
       return findOrderItems
     } catch (error) {
-      console.log(error)
-      throw new Error(`error: ${error}`)
+      throw new HttpException(
+        StatusCode.InternalServerError,
+        ErrorName.InternalError,
+        CreateNotOccurredError(Field.OrderItem)
+      )
     }
   }
 }

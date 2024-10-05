@@ -1,6 +1,6 @@
-import { UpdateProductDTO } from '@application/dtos/product'
 import { Product } from '@domain/entities'
+import { UpdateProduct } from '@domain/interfaces/product'
 
 export interface UpdateProductUseCase {
-  execute(pathParameters: UpdateProductDTO): Promise<Product | null>
+  execute(payload: UpdateProduct): Promise<Product>
 }

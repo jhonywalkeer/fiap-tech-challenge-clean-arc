@@ -1,16 +1,11 @@
 import { EmptyFiller } from '@common/constants'
-import { Order } from '@domain/entities'
-import {
-  OrderItemsSchema,
-  OrderSchema,
-  ProductSchema
-} from '@infrastructure/persistence/database/schemas'
+import { Order, OrderItem, Product } from '@domain/entities'
 
 export class OrderMap {
   static async execute(
-    order: OrderSchema,
-    orderItems: OrderItemsSchema[] | null,
-    products: ProductSchema[] | null
+    order: Order,
+    orderItems: OrderItem[] | null,
+    products: Product[] | null
   ): Promise<Order> {
     return {
       id: order.id,

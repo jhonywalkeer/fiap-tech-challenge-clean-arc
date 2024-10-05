@@ -1,15 +1,16 @@
-import { DeleteCategoryDTO } from '@application/dtos/category'
 import { DeleteCategoryRepository } from '@application/repositories/category'
+import { ErrorName, StatusCode } from '@common/enums'
 import { DeleteNotOccurredError } from '@common/errors'
+import { Identifier } from '@common/interfaces'
 import { HttpException } from '@common/utils/exceptions'
-import { StatusCode, ErrorName, Field } from '@domain/enums'
+import { Field } from '@domain/enums'
 import { DatabaseConnection } from '@infrastructure/persistence/database'
 export class DeleteCategoryPrismaRepository
   implements DeleteCategoryRepository
 {
   constructor(private readonly prisma: DatabaseConnection) {}
 
-  async delete(pathParameters: DeleteCategoryDTO): Promise<void> {
+  async delete(pathParameters: Identifier): Promise<void> {
     try {
       await this.prisma.category.delete({
         where: {

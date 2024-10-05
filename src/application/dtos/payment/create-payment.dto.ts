@@ -1,35 +1,35 @@
-import { IsNumberValidator, IsStringValidator } from '@presentation/validators'
-import { CreatePaymentPayerDTO } from './create-payment-payer.dto'
 import { Field } from '@domain/enums'
+import { IsNumberValidator, IsStringValidator } from '@presentation/validators'
+
+import { CreatePaymentPayerDTO } from './create-payment-payer.dto'
 
 export class CreatePaymentDTO {
+  order_id: string
   transaction_amount: number
   description: string
   payment_method: string
   payer: CreatePaymentPayerDTO
+  qr_code?: string
+  status?: string
 
   constructor(
+    order_id: string,
     transaction_amount: number,
     description: string,
     payment_method: string,
-    payer: CreatePaymentPayerDTO
+    payer: CreatePaymentPayerDTO,
+    qr_code?: string,
+    status?: string
   ) {
     IsNumberValidator(transaction_amount, Field.TransactionAmount)
     IsStringValidator(description, Field.Description)
-    IsStringValidator(payment_method, Field.Method)
 
+    this.order_id = order_id
     this.transaction_amount = transaction_amount
     this.description = description
     this.payment_method = payment_method
     this.payer = payer
+    this.qr_code = qr_code
+    this.status = status
   }
 }
-
-// { body: {
-// 	transaction_amount: 12.34,
-// 	description: '<DESCRIPTION>',
-// 	payment_method_id: '<PAYMENT_METHOD_ID>',
-// 	payer: {
-// 		email: '<EMAIL>'
-// 	},
-// },

@@ -1,1 +1,1 @@
-export * from './express-route.http'
+export * from './express-route.adapter'

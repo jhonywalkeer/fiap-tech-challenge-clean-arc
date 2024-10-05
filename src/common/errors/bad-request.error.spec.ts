@@ -1,9 +1,9 @@
 import { BadRequestError } from './bad-request.error'
 
 describe('[Errors] Bad Request ', () => {
-  it('should return a string', () => {
+  it('must return a string with the structured error', () => {
     expect(BadRequestError()).toBe(
-      'Body esperado precisa ser informado corretamente'
+      'Body esperado precisa ser informado corretamente.'
     )
   })
 })

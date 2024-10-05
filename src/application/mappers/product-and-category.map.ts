@@ -12,8 +12,7 @@ export class ProductAndCategoryMap {
         description: category.description
       },
       price: product.price,
-      size: product.size,
-      created_at: product.created_at
+      size: product.size
     }
   }
 }

@@ -4,34 +4,37 @@ import {
   FindOrderByIdPrismaRepository,
   DeleteOrderPrismaRepository
 } from '@infrastructure/persistence/database/repositories/order'
-import { FindOrderItemByConditionPrismaRepository } from '@infrastructure/persistence/database/repositories/order-item'
-import { FindPaymentByConditionPrismaRepository } from '@infrastructure/persistence/database/repositories/payment'
+import {
+  DeleteOrderItemPrismaRepository,
+  FindOrderItemByConditionPrismaRepository
+} from '@infrastructure/persistence/database/repositories/order-item'
 import { FindProductByConditionPrismaRepository } from '@infrastructure/persistence/database/repositories/product'
 import { DeleteOrderController } from '@presentation/controllers/order'
 import { HttpGenericResponse } from '@presentation/protocols/http'
 
 export const DeleteOrderControllerFactory = () => {
   const databaseConnection = new DatabaseConnection()
-  const productRepository = new FindProductByConditionPrismaRepository(
-    databaseConnection
-  )
-  const paymentRepository = new FindPaymentByConditionPrismaRepository(
-    databaseConnection
-  )
-  const orderItemRepository = new FindOrderItemByConditionPrismaRepository(
-    databaseConnection
-  )
-  const findOrderRepository = new FindOrderByIdPrismaRepository(
+  const findProductByConditionRepository =
+    new FindProductByConditionPrismaRepository(databaseConnection)
+  const findOrderItemByConditionRepository =
+    new FindOrderItemByConditionPrismaRepository(databaseConnection)
+  const FindOrderByIdRepository = new FindOrderByIdPrismaRepository(
     databaseConnection,
-    paymentRepository,
-    orderItemRepository,
-    productRepository
+    findOrderItemByConditionRepository,
+    findProductByConditionRepository
   )
-  const orderRepository = new DeleteOrderPrismaRepository(
-    databaseConnection,
-    findOrderRepository
+  const deleteOrderItemRepository = new DeleteOrderItemPrismaRepository(
+    databaseConnection
   )
-  const deleteOrderUseCase = new DeleteOrderUC(orderRepository)
+  const deleteOrderRepository = new DeleteOrderPrismaRepository(
+    databaseConnection
+  )
+  const deleteOrderUseCase = new DeleteOrderUC(
+    FindOrderByIdRepository,
+    findOrderItemByConditionRepository,
+    deleteOrderItemRepository,
+    deleteOrderRepository
+  )
   const genericSucessPresenter = new HttpGenericResponse<void>()
   const deleteOrderController = new DeleteOrderController(
     deleteOrderUseCase,
@@ -40,7 +43,7 @@ export const DeleteOrderControllerFactory = () => {
 
   return {
     databaseConnection,
-    orderRepository,
+    deleteOrderRepository,
     deleteOrderUseCase,
     deleteOrderController
   }

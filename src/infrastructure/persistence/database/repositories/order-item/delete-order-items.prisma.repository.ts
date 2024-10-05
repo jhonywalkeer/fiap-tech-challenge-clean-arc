@@ -1,35 +1,32 @@
 import { DeleteOrderItemRepository } from '@application/repositories/order-item/delete-order-item.repository'
-import { DatabaseConnection } from '@infrastructure/persistence/database'
+import { ErrorName, StatusCode } from '@common/enums'
+import { DeleteNotOccurredError } from '@common/errors'
+import { Identifier } from '@common/interfaces'
 import { HttpException } from '@common/utils/exceptions'
-import { StatusCode, ErrorName, ErrorMessage } from '@domain/enums'
-import { DeleteOrderItemDTO } from '@application/dtos/order-item'
-import { FindOrderItemByIdPrismaRepository } from './find-order-item-by-id.prisma.repository'
+import { Field } from '@domain/enums'
+import { DatabaseConnection } from '@infrastructure/persistence/database'
 
 export class DeleteOrderItemPrismaRepository
   implements DeleteOrderItemRepository
 {
-  constructor(
-    private readonly prisma: DatabaseConnection,
-    private readonly orderItemRepository: FindOrderItemByIdPrismaRepository
-  ) {}
+  constructor(private readonly prisma: DatabaseConnection) {}
 
-  async delete(pathParameters: DeleteOrderItemDTO): Promise<void> {
-    const orderItems = await this.orderItemRepository.findById({
-      id: pathParameters.id
-    })
-
-    if (!orderItems || orderItems === null) {
+  async delete(pathParameters: Identifier): Promise<void> {
+    try {
+      await this.prisma.order_item.deleteMany({
+        where: {
+          id: {
+            in: pathParameters.ids
+          }
+        }
+      })
+    } catch (error) {
+      console.log(' DeleteOrderItemPrismaRepository', error)
       throw new HttpException(
-        StatusCode.NoContent,
-        ErrorName.NotFoundInformation,
-        ErrorMessage.OrderItemNotExists
+        StatusCode.InternalServerError,
+        ErrorName.InternalError,
+        DeleteNotOccurredError(Field.OrderItem)
       )
     }
-
-    await this.prisma.product.deleteMany({
-      where: {
-        id: pathParameters.id
-      }
-    })
   }
 }

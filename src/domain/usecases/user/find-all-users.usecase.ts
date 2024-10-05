@@ -1,6 +1,7 @@
-import { FindAllUsersDTO } from '@application/dtos/user'
+import { PaginationAndFilter } from '@common/interfaces'
+import { PaginateResponse } from '@common/types/paginate-response.type'
 import { User } from '@domain/entities'
 
 export interface FindAllUsersUseCase {
-  execute(queryParameters: FindAllUsersDTO): Promise<User[]>
+  execute(queryParameters: PaginationAndFilter): Promise<PaginateResponse<User>>
 }

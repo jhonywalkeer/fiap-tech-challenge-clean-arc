@@ -1,7 +1,6 @@
 import { UpdateOrderDTO } from '@application/dtos/order'
-import { HttpException } from '@common/utils/exceptions'
+import { StatusCode } from '@common/enums'
 import { Order } from '@domain/entities'
-import { StatusCode, ErrorName, ErrorMessage } from '@domain/enums'
 import { UpdateOrderUseCase } from '@domain/usecases/order'
 import { Controller } from '@presentation/protocols/controller'
 import { ResponseHandler, HttpRequest } from '@presentation/protocols/http'
@@ -11,21 +10,13 @@ export class UpdateOrderController implements Controller<Order> {
     private readonly updateOrderUC: UpdateOrderUseCase,
     private readonly updateOrderPresenter: ResponseHandler<Order>
   ) {}
-  async handle(pathParameters: HttpRequest) {
-    const { id } = pathParameters.params
-    const { items, observation, customer } = pathParameters.body
+  async handle(request: HttpRequest) {
+    const { id } = request.params
+    const { items, observation, customer } = request.body
     const parameters: UpdateOrderDTO = Object.assign(
       new UpdateOrderDTO(id, items, observation, customer)
     )
-    const order: Order | null = await this.updateOrderUC.execute(parameters)
-
-    if (!order) {
-      throw new HttpException(
-        StatusCode.NotFound,
-        ErrorName.NotFoundInformation,
-        ErrorMessage.OrderNotFound
-      )
-    }
+    const order: Order = await this.updateOrderUC.execute(parameters)
 
     return this.updateOrderPresenter.response(order, StatusCode.Sucess)
   }

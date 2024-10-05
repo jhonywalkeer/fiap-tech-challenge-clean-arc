@@ -1,8 +1,8 @@
 import { CreateUserDTO } from '@application/dtos/user'
 import { CreateUserRepository } from '@application/repositories/user'
+import { StatusCode, ErrorName } from '@common/enums'
 import { HttpException } from '@common/utils/exceptions'
 import { User } from '@domain/entities'
-import { StatusCode, ErrorName } from '@domain/enums'
 import { DatabaseConnection } from '@infrastructure/persistence/database'
 
 export class CreateUserPrismaRepository implements CreateUserRepository {

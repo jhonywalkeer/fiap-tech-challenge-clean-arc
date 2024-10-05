@@ -1,9 +1,11 @@
-import { UpdateProductDTO } from '@application/dtos/product'
 import { ProductAndCategoryMap } from '@application/mappers'
 import { UpdateProductRepository } from '@application/repositories/product'
+import { ErrorName, StatusCode } from '@common/enums'
+import { UpdateNotOccurredError } from '@common/errors'
 import { HttpException } from '@common/utils/exceptions'
 import { Product } from '@domain/entities'
-import { StatusCode, ErrorName, ErrorMessage } from '@domain/enums'
+import { Field } from '@domain/enums'
+import { UpdateProduct } from '@domain/interfaces/product'
 import { DatabaseConnection } from '@infrastructure/persistence/database'
 import { FindProductByIdPrismaRepository } from '@infrastructure/persistence/database/repositories/product'
 
@@ -13,53 +15,31 @@ export class UpdateProductPrismaRepository implements UpdateProductRepository {
     private readonly findProductById: FindProductByIdPrismaRepository
   ) {}
 
-  async update(pathParameters: UpdateProductDTO): Promise<Product | null> {
-    const product = await this.findProductById.findById({
-      id: pathParameters.id
-    })
+  async update(payload: UpdateProduct): Promise<Product | null> {
+    try {
+      const update = await this.prisma.product.update({
+        where: {
+          id: payload.id
+        },
+        data: {
+          name: payload.name,
+          price: payload.price,
+          category_id: payload.category_id,
+          description: payload.description
+        }
+      })
 
-    const category = await this.prisma.category.findUnique({
-      where: {
-        id: pathParameters.category_id
-      }
-    })
+      const findProduct = await this.findProductById.findById({
+        id: update.id
+      })
 
-    if (product === null) {
+      return ProductAndCategoryMap.execute(findProduct, payload.category)
+    } catch (error) {
       throw new HttpException(
-        StatusCode.NotFound,
-        ErrorName.NotFoundInformation,
-        ErrorMessage.ProductNotFound
+        StatusCode.InternalServerError,
+        ErrorName.InternalError,
+        UpdateNotOccurredError(Field.Category)
       )
     }
-
-    if (category === null) {
-      throw new HttpException(
-        StatusCode.NotFound,
-        ErrorName.NotFoundInformation,
-        ErrorMessage.CategoriesNotFound
-      )
-    }
-
-    const update = await this.prisma.product.update({
-      where: {
-        id: pathParameters.id
-      },
-      data: {
-        name: pathParameters.name ? pathParameters.name : product.name,
-        price: pathParameters.price ? pathParameters.price : product.price,
-        category_id: pathParameters.category_id
-          ? pathParameters.category_id
-          : product.category.id,
-        description: pathParameters.description
-          ? pathParameters.description
-          : product.description
-      }
-    })
-
-    const findProduct = await this.findProductById.findById({
-      id: update.id
-    })
-
-    return ProductAndCategoryMap.execute(findProduct, findProduct?.category)
   }
 }

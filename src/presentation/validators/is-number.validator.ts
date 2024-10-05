@@ -1,6 +1,6 @@
 import { NumberValidationMessage } from '@common/constants'
+import { ErrorName, StatusCode, Type } from '@common/enums'
 import { HttpException } from '@common/utils/exceptions'
-import { Type, StatusCode, ErrorName } from '@domain/enums'
 
 export const IsNumberValidator = (value: any, identifier: string): number => {
   if (typeof value !== Type.number) {

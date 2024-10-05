@@ -1,28 +1,22 @@
 import { IdentifierDTO } from '@application/dtos/common'
-import {
-  IsEnumValidator,
-  IsNumberValidator,
-  IsStringValidator
-} from '@presentation/validators'
-import { PaymentMethod, Field } from '@domain/enums'
+import { Field } from '@domain/enums'
+import { IsNumberValidator, IsStringValidator } from '@presentation/validators'
 
 export class UpdatePaymentDTO extends IdentifierDTO {
+  order_id: string
   payment_method: string
   amount: number
   status: string
 
   constructor(
     id: string,
+    order_id: string,
     payment_method: string,
     amount: number,
     status: string
   ) {
     super(id)
-    this.payment_method = IsEnumValidator(
-      payment_method,
-      PaymentMethod,
-      Field.Method
-    )
+    this.order_id = IsStringValidator(order_id, Field.Order)
     this.amount = IsNumberValidator(amount, Field.Amount)
     this.status = IsStringValidator(status, Field.Status)
   }

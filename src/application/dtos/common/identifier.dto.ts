@@ -1,7 +1,7 @@
-import { StatusCode, ErrorName } from '@domain/enums'
+import { StatusCode, ErrorName } from '@common/enums'
+import { ParamNotValidError } from '@common/errors/param-not-valid.error'
 import { HttpException } from '@common/utils/exceptions'
 import { SymbolsListValidator } from '@presentation/validators'
-import { ParamNotValidError } from '@common/errors/param-not-valid.error'
 
 export class IdentifierDTO {
   id: string

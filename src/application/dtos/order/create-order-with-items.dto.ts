@@ -1,18 +1,20 @@
-import { CreateOrderItemDTO } from '@application/dtos/order-item/create-order-item.dto'
-import { IsStringValidator } from '@presentation/validators'
-import { HttpException } from '@common/utils/exceptions'
-import { ErrorName, Field, StatusCode } from '@domain/enums'
+import { ErrorName, StatusCode } from '@common/enums'
 import { BadRequestError } from '@common/errors'
+import { HttpException } from '@common/utils/exceptions'
+import { Field } from '@domain/enums'
+import { IsStringValidator } from '@presentation/validators'
+
+import { FindProductWithQuantityDTO } from '../product'
 
 export class CreateOrderWithItemsDTO {
-  items: CreateOrderItemDTO[]
+  items: FindProductWithQuantityDTO[]
   customer: string
   observation?: string
 
   constructor(
-    items: CreateOrderItemDTO[],
+    items: FindProductWithQuantityDTO[],
     customer: string,
-    observation?: string
+    field: Partial<{ observation: string }>
   ) {
     if (!items || !customer) {
       throw new HttpException(
@@ -21,9 +23,11 @@ export class CreateOrderWithItemsDTO {
         BadRequestError()
       )
     }
-    IsStringValidator(customer, Field.CustomerIdentifier)
+
+    if (field.observation) {
+      this.observation = IsStringValidator(field.observation, Field.Observation)
+    }
     this.items = items
-    this.customer = customer
-    this.observation = observation
+    this.customer = IsStringValidator(customer, Field.CustomerIdentifier)
   }
 }

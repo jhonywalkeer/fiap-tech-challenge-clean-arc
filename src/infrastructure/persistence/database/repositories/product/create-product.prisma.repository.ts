@@ -1,50 +1,34 @@
-import { CreateProductDTO } from '@application/dtos/product'
 import { ProductAndCategoryMap } from '@application/mappers'
 import { CreateProductRepository } from '@application/repositories/product'
+import { ErrorName, StatusCode } from '@common/enums'
+import { CreateNotOccurredError } from '@common/errors'
 import { HttpException } from '@common/utils/exceptions'
 import { Product } from '@domain/entities'
-import { StatusCode, ErrorName, ErrorMessage } from '@domain/enums'
+import { Field } from '@domain/enums'
+import { CreateProduct } from '@domain/interfaces/product'
 import { DatabaseConnection } from '@infrastructure/persistence/database'
-
 export class CreateProductPrismaRepository implements CreateProductRepository {
   constructor(private readonly prisma: DatabaseConnection) {}
 
-  async create(body: CreateProductDTO): Promise<Product> {
-    const product = await this.prisma.product.findMany({
-      where: { name: body.name },
-      include: { category: true }
-    })
+  async create(payload: CreateProduct): Promise<Product> {
+    try {
+      const createProduct = await this.prisma.product.create({
+        data: {
+          name: payload.name,
+          description: payload.description,
+          category_id: payload.category_id,
+          price: payload.price,
+          size: payload.size
+        }
+      })
 
-    const category = await this.prisma.category.findUnique({
-      where: { id: body.category_id }
-    })
-
-    if (!category) {
+      return ProductAndCategoryMap.execute(createProduct, payload.category)
+    } catch (error) {
       throw new HttpException(
-        StatusCode.NotFound,
-        ErrorName.NotFoundInformation,
-        ErrorMessage.CategoryNotFound
+        StatusCode.InternalServerError,
+        ErrorName.InternalError,
+        CreateNotOccurredError(Field.Product)
       )
     }
-
-    if (product.length > 0) {
-      throw new HttpException(
-        StatusCode.Conflict,
-        ErrorName.ResourceAlreadyExists,
-        ErrorMessage.ProductExists
-      )
-    }
-
-    const createProduct = await this.prisma.product.create({
-      data: {
-        name: body.name,
-        description: body.description,
-        category_id: category.id,
-        price: body.price,
-        size: body.size
-      }
-    })
-
-    return ProductAndCategoryMap.execute(createProduct, category)
   }
 }

@@ -4,5 +4,5 @@ export const NotFoundSpecificError = (
   field: string,
   identifier: string
 ): string => {
-  return `${CapitalizeFirstLetterFormat(field)} com identificador ${identifier} não foi encontrado`
+  return `${CapitalizeFirstLetterFormat(field)} com identificador ${identifier} não foi encontrado!`
 }

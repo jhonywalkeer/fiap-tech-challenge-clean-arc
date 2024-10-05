@@ -1,24 +1,26 @@
-import { DeleteCategoryDTO } from '@application/dtos/category'
-import { DeleteCategoryRepository } from '@application/repositories/category'
+import {
+  DeleteCategoryRepository,
+  FindCategoryByIdRepository
+} from '@application/repositories/category'
+import { ErrorName, StatusCode } from '@common/enums'
 import { DeleteOrNotExistsError } from '@common/errors'
+import { Identifier } from '@common/interfaces'
 import { HttpException } from '@common/utils/exceptions'
-import { StatusCode, ErrorName, Field } from '@domain/enums'
+import { Field } from '@domain/enums'
 import { DeleteCategoryUseCase } from '@domain/usecases/category'
-import { FindCategoryByIdPrismaRepository } from '@infrastructure/persistence/database/repositories/category'
 
 export class DeleteCategoryUC implements DeleteCategoryUseCase {
   constructor(
-    private readonly findCategoryByIdRepository: FindCategoryByIdPrismaRepository,
+    private readonly findCategoryByIdRepository: FindCategoryByIdRepository,
     private readonly deleteCategoryRepository: DeleteCategoryRepository
   ) {}
-  async execute(pathParameters: DeleteCategoryDTO): Promise<void> {
-    const findCategory = await this.findCategoryByIdRepository.findById({
-      id: pathParameters.id
-    })
+  async execute(pathParameters: Identifier): Promise<void> {
+    const findCategory =
+      await this.findCategoryByIdRepository.findById(pathParameters)
 
-    if (!findCategory || findCategory === null) {
+    if (findCategory === null) {
       throw new HttpException(
-        StatusCode.NoContent,
+        StatusCode.NotFound,
         ErrorName.NotFoundInformation,
         DeleteOrNotExistsError(Field.Category)
       )

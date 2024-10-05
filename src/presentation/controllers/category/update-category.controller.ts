@@ -1,6 +1,6 @@
 import { UpdateCategoryDTO } from '@application/dtos/category'
+import { StatusCode } from '@common/enums'
 import { Category } from '@domain/entities'
-import { StatusCode } from '@domain/enums'
 import { UpdateCategoryUseCase } from '@domain/usecases/category'
 import { Controller } from '@presentation/protocols/controller'
 import { ResponseHandler, HttpRequest } from '@presentation/protocols/http'
@@ -10,13 +10,13 @@ export class UpdateCategoryController implements Controller<Category> {
     private readonly updateCategoryUC: UpdateCategoryUseCase,
     private readonly updateCategoryPresenter: ResponseHandler<Category>
   ) {}
-  async handle(pathParameters: HttpRequest) {
-    const { id } = pathParameters.params
-    const { name, description } = pathParameters.body
+  async handle(request: HttpRequest) {
+    const { id } = request.params
+    const { name, description } = request.body
     const parameters: UpdateCategoryDTO = Object.assign(
-      new UpdateCategoryDTO(id, name, description)
+      new UpdateCategoryDTO(id, { name, description })
     )
-    const category = await this.updateCategoryUC.execute(parameters)
+    const category: Category = await this.updateCategoryUC.execute(parameters)
 
     return this.updateCategoryPresenter.response(category, StatusCode.Sucess)
   }

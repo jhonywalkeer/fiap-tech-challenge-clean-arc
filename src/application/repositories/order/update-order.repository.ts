@@ -1,5 +1,5 @@
-import { UpdateRepository } from '@common/types'
 import { Repositories } from '@application/repositories/common'
+import { UpdateRepository } from '@common/types'
 import { Order } from '@domain/entities'
 
 export interface UpdateOrderRepository

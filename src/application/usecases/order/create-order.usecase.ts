@@ -1,18 +1,21 @@
-import { CreateOrderItemDTO } from '@application/dtos/order-item'
-import { CreateOrderWithItemsDTO } from '@application/dtos/order/create-order-with-items.dto'
-import { CreateOrderWithItemsMap, OrderItemsMap } from '@application/mappers'
-import { CreateOrderMap } from '@application/mappers/create-order.map'
+import {
+  CreateOrderWithItemsMap,
+  OrderItemsWithProductsMap
+} from '@application/mappers'
+import { OrderWithItemsMap } from '@application/mappers/order-with-items.map'
 import { CreateOrderRepository } from '@application/repositories/order'
 import { CreateOrderItemRepository } from '@application/repositories/order-item'
 import { FindProductByConditionRepository } from '@application/repositories/product'
 import { FindUserByIdRepository } from '@application/repositories/user'
 import { CustumerNameFiller, ObservationFiller } from '@common/constants'
-import { NotFoundSpecificError } from '@common/errors'
+import { ErrorName, StatusCode } from '@common/enums'
+import { NotFoundAllError } from '@common/errors'
 import { HttpException } from '@common/utils/exceptions'
 import { OrderIdentifierGenerator } from '@common/utils/generators'
 import { IsCpfIdentify } from '@common/utils/identifiers'
-import { Order, OrderItem, Product } from '@domain/entities'
-import { StatusCode, ErrorName, OrderStatus, Field } from '@domain/enums'
+import { Order, OrderItem, Product, User } from '@domain/entities'
+import { Field, OrderStatus } from '@domain/enums'
+import { CreateOrderWithItems } from '@domain/interfaces/order'
 import { CreateOrderUseCase } from '@domain/usecases/order'
 export class CreateOrderUC implements CreateOrderUseCase {
   constructor(
@@ -22,64 +25,51 @@ export class CreateOrderUC implements CreateOrderUseCase {
     private readonly createOrderItemsRepository: CreateOrderItemRepository
   ) {}
 
-  async execute(body: CreateOrderWithItemsDTO): Promise<Order> {
+  async execute(payload: CreateOrderWithItems): Promise<Order> {
     const identifierOrder: string = OrderIdentifierGenerator()
-
     let customerName: string = CustumerNameFiller
     let customerId = null
 
-    if (IsCpfIdentify(body.customer)) {
-      const findUser = await this.findUserByIdRepository.findById({
-        social_security_number: body.customer
+    if (IsCpfIdentify(payload.customer)) {
+      const findUser: User | null = await this.findUserByIdRepository.findById({
+        social_security_number: payload.customer
       })
-
-      if (!findUser) {
-        throw new HttpException(
-          StatusCode.NotFound,
-          ErrorName.NotFoundInformation,
-          NotFoundSpecificError(Field.User, body.customer)
-        )
-      }
-      customerId = findUser.id ?? null
-      customerName = findUser.name
+      customerId = findUser?.id
+      customerName = findUser?.name ?? CustumerNameFiller
     }
 
     const findproducts: Product[] | null =
       await this.findProductByConditionRepository.findByCondition({
-        ids: body.items.map((item) => item.product_id)
+        ids: payload.items.map((item) => item.product_id)
       })
 
-    const identifyOrderItems: OrderItem[] = OrderItemsMap.execute(
-      findproducts,
-      body.items
-    )
-
-    const order: Order = CreateOrderMap.execute(
-      identifierOrder,
-      customerName,
-      identifyOrderItems,
-      body
-    )
+    if (!findproducts) {
+      throw new HttpException(
+        StatusCode.NotFound,
+        ErrorName.NotFoundInformation,
+        NotFoundAllError(Field.Product)
+      )
+    }
 
     const createOrder: Order = await this.createOrderRepository.create({
-      order: order.order,
+      order: identifierOrder,
       status: OrderStatus.AwaitingPayment,
       customer: customerName,
       user_id: customerId,
-      observation: body.observation ?? ObservationFiller
+      observation: payload.observation ?? ObservationFiller
     })
 
-    const orderItemsBody: CreateOrderItemDTO[] =
-      CreateOrderWithItemsMap.execute(createOrder, identifyOrderItems)
-
     const createOrderItems: OrderItem | OrderItem[] =
-      await this.createOrderItemsRepository.create(orderItemsBody)
+      await this.createOrderItemsRepository.create(
+        CreateOrderWithItemsMap.execute(
+          createOrder,
+          OrderItemsWithProductsMap.execute(findproducts, {
+            ...payload,
+            order_id: createOrder.id
+          })
+        )
+      )
 
-    return {
-      ...createOrder,
-      items: Array.isArray(createOrderItems)
-        ? createOrderItems
-        : [createOrderItems]
-    }
+    return OrderWithItemsMap.execute(createOrder, createOrderItems)
   }
 }

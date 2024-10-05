@@ -1,5 +1,4 @@
 export enum ErrorMessage {
-  CategoryExists = 'Categoria já existente',
   ProductExists = 'Produto já existente',
   UserNotFound = 'Usuário filtrado não encontrado',
   UsersNotFound = 'Usuários não encontrados',
