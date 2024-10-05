@@ -1,7 +1,13 @@
-import { FindAllProductsDTO } from '@application/dtos/product'
 import { ProductAndCategoryMap } from '@application/mappers'
 import { FindAllProductRepository } from '@application/repositories/product'
+import { ErrorName, StatusCode } from '@common/enums'
+import { FindNotOccurredError } from '@common/errors'
+import { PaginationAndFilter } from '@common/interfaces'
+import { PaginateResponse } from '@common/types'
+import { HttpException } from '@common/utils/exceptions'
+import { PaginationFilter } from '@common/utils/filters'
 import { Product } from '@domain/entities'
+import { Field } from '@domain/enums'
 import { DatabaseConnection } from '@infrastructure/persistence/database'
 
 export class FindAllProductsPrismaRepository
@@ -10,20 +16,31 @@ export class FindAllProductsPrismaRepository
   constructor(private readonly prisma: DatabaseConnection) {}
 
   async findAll(
-    queryParameters: FindAllProductsDTO
-  ): Promise<Product[] | null> {
-    const page = queryParameters.page
-    const limit = queryParameters.limit
-
-    console.log(page, limit)
-    const findProduct = await this.prisma.product.findMany({
-      include: { category: true }
-    })
-
-    const formatProductAndCategory = findProduct.map((product) => {
-      return ProductAndCategoryMap.execute(product, product.category)
-    })
-
-    return formatProductAndCategory
+    queryParameters: PaginationAndFilter
+  ): Promise<PaginateResponse<Product> | null> {
+    try {
+      const findProduct = await this.prisma.product.findMany({
+        include: { category: true },
+        ...PaginationFilter(queryParameters.page, queryParameters.limit)
+      })
+      const countProducts = await this.prisma.product.count()
+      return !findProduct || findProduct.length === 0
+        ? null
+        : {
+            total: countProducts,
+            page: queryParameters.page,
+            total_pages: Math.ceil(countProducts / queryParameters.limit),
+            limit: queryParameters.limit,
+            data: findProduct.map((product) => {
+              return ProductAndCategoryMap.execute(product, product.category)
+            })
+          }
+    } catch (error) {
+      throw new HttpException(
+        StatusCode.InternalServerError,
+        ErrorName.InternalError,
+        FindNotOccurredError(Field.Product)
+      )
+    }
   }
 }

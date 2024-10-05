@@ -1,7 +1,11 @@
-import { FindProductByIdDTO } from '@application/dtos/product'
 import { ProductAndCategoryMap } from '@application/mappers'
 import { FindProductByIdRepository } from '@application/repositories/product'
+import { ErrorName, StatusCode } from '@common/enums'
+import { FindNotOccurredError } from '@common/errors'
+import { Identifier } from '@common/interfaces'
+import { HttpException } from '@common/utils/exceptions'
 import { Product } from '@domain/entities'
+import { Field } from '@domain/enums'
 import { DatabaseConnection } from '@infrastructure/persistence/database'
 
 export class FindProductByIdPrismaRepository
@@ -9,18 +13,24 @@ export class FindProductByIdPrismaRepository
 {
   constructor(private readonly prisma: DatabaseConnection) {}
 
-  async findById(pathParameters: FindProductByIdDTO): Promise<Product | null> {
-    const findProduct = await this.prisma.product.findFirst({
-      where: {
-        id: pathParameters.id
-      },
-      include: { category: true }
-    })
-    const formatProductAndCategory = ProductAndCategoryMap.execute(
-      findProduct,
-      findProduct?.category
-    )
+  async findById(pathParameters: Identifier): Promise<Product | null> {
+    try {
+      const findProduct = await this.prisma.product.findFirst({
+        where: {
+          id: pathParameters.id
+        },
+        include: { category: true }
+      })
 
-    return formatProductAndCategory
+      return !findProduct
+        ? null
+        : ProductAndCategoryMap.execute(findProduct, findProduct.category)
+    } catch (error) {
+      throw new HttpException(
+        StatusCode.InternalServerError,
+        ErrorName.InternalError,
+        FindNotOccurredError(Field.Product)
+      )
+    }
   }
 }

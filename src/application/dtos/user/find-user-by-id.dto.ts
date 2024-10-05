@@ -1,7 +1,8 @@
-import { StatusCode, ErrorName, ErrorMessage } from '@domain/enums'
-import { SymbolsListValidator } from '@presentation/validators'
+import { ErrorName, StatusCode } from '@common/enums'
+import { ParamNotValidError } from '@common/errors'
 import { HttpException } from '@common/utils/exceptions'
 import { RemoveDotsAndDashesFormat } from '@common/utils/formaters'
+import { SymbolsListValidator } from '@presentation/validators'
 
 export class FindUserByIdDTO {
   social_security_number: string
@@ -11,7 +12,7 @@ export class FindUserByIdDTO {
       throw new HttpException(
         StatusCode.BadRequest,
         ErrorName.InvalidParameters,
-        ErrorMessage.ParameterNotInvalid
+        ParamNotValidError()
       )
 
     social_security_number = RemoveDotsAndDashesFormat(social_security_number)

@@ -1,7 +1,8 @@
-import { IsStringValidator } from '@presentation/validators'
-import { HttpException } from '@common/utils/exceptions'
-import { ErrorName, Field, StatusCode } from '@domain/enums'
+import { StatusCode, ErrorName } from '@common/enums'
 import { BadRequestError } from '@common/errors'
+import { HttpException } from '@common/utils/exceptions'
+import { Field } from '@domain/enums'
+import { IsStringValidator } from '@presentation/validators'
 
 export class CreateCategoryDTO {
   name: string

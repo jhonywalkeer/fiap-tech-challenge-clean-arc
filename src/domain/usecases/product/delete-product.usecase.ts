@@ -1,5 +1,5 @@
-import { DeleteProductDTO } from '@application/dtos/product'
+import { Identifier } from '@common/interfaces'
 
 export interface DeleteProductUseCase {
-  execute(pathParameters: DeleteProductDTO): Promise<void>
+  execute(pathParameters: Identifier): Promise<void>
 }

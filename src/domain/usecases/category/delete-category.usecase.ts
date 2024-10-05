@@ -1,5 +1,5 @@
-import { DeleteCategoryDTO } from '@application/dtos/category'
+import { Identifier } from '@common/interfaces'
 
 export interface DeleteCategoryUseCase {
-  execute(pathParameters: DeleteCategoryDTO): Promise<void>
+  execute(pathParameters: Identifier): Promise<void>
 }

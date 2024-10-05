@@ -1,18 +1,15 @@
 import { FindOrderByIdDTO } from '@application/dtos/order'
-import { FindOrderByIdRepository } from '@application/repositories/order'
-import { FindProductByConditionPrismaRepository } from '@infrastructure/persistence/database/repositories/product'
-import { FindOrderItemByConditionPrismaRepository } from '@infrastructure/persistence/database/repositories/order-item'
-import { HttpException } from '@common/utils/exceptions'
-import { Order } from '@domain/entities'
-import { StatusCode, ErrorName, ErrorMessage } from '@domain/enums'
-import { DatabaseConnection } from '@infrastructure/persistence/database'
-import {
-  OrderItemsSchema,
-  OrderSchema,
-  ProductWithCategorySchema
-} from '@infrastructure/persistence/database/schemas'
 import { OrderMap } from '@application/mappers/order.map'
+import { FindOrderByIdRepository } from '@application/repositories/order'
 import { EmptyFiller } from '@common/constants'
+import { ErrorName, StatusCode } from '@common/enums'
+import { NotFoundByIdError } from '@common/errors'
+import { HttpException } from '@common/utils/exceptions'
+import { Order, OrderItem, Product } from '@domain/entities'
+import { Field } from '@domain/enums'
+import { DatabaseConnection } from '@infrastructure/persistence/database'
+import { FindOrderItemByConditionPrismaRepository } from '@infrastructure/persistence/database/repositories/order-item'
+import { FindProductByConditionPrismaRepository } from '@infrastructure/persistence/database/repositories/product'
 
 export class FindOrderByIdPrismaRepository implements FindOrderByIdRepository {
   constructor(
@@ -23,34 +20,41 @@ export class FindOrderByIdPrismaRepository implements FindOrderByIdRepository {
 
   async findById(pathParameters: FindOrderByIdDTO): Promise<Order | null> {
     try {
-      const findOrder: OrderSchema | null = await this.prisma.order.findUnique({
+      const findOrder = await this.prisma.order.findUnique({
         where: {
           id: pathParameters.id
         }
       })
 
-      if (!findOrder || findOrder === null) {
-        throw new HttpException(
-          StatusCode.NotFound,
-          ErrorName.NotFoundInformation,
-          ErrorMessage.OrderNotFound
-        )
+      if (!findOrder) {
+        return null
       }
 
-      const findItems: OrderItemsSchema[] | null =
+      const findItems: OrderItem[] | null =
         await this.orderItemRepository.findByCondition({
           ids: [findOrder?.id]
         })
 
-      const findProducts: ProductWithCategorySchema[] | null =
+      if (!findItems) {
+        return null
+      }
+
+      const findProducts: Product[] | null =
         await this.productRepository.findByCondition({
           ids: findItems?.map((item) => item.product_id ?? EmptyFiller)
         })
 
+      if (!findProducts) {
+        return null
+      }
+
       return OrderMap.execute(findOrder, findItems, findProducts)
     } catch (error) {
-      console.info('FindOrderByIdPrismaRepository.findById: Not found order')
-      return null
+      throw new HttpException(
+        StatusCode.InternalServerError,
+        ErrorName.InternalError,
+        NotFoundByIdError(Field.Order)
+      )
     }
   }
 }

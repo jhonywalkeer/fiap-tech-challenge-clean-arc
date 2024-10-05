@@ -9,7 +9,6 @@ import {
   FindOrderItemByConditionPrismaRepository,
   CreateOrderItemPrismaRepository
 } from '@infrastructure/persistence/database/repositories/order-item'
-import { FindPaymentByConditionPrismaRepository } from '@infrastructure/persistence/database/repositories/payment'
 import { FindProductByConditionPrismaRepository } from '@infrastructure/persistence/database/repositories/product'
 import { FindUserByIdPrismaRepository } from '@infrastructure/persistence/database/repositories/user'
 import { CreateOrderController } from '@presentation/controllers/order'
@@ -17,39 +16,32 @@ import { HttpGenericResponse } from '@presentation/protocols/http'
 
 export const CreateOrderControllerFactory = () => {
   const databaseConnection = new DatabaseConnection()
-  const userRepository = new FindUserByIdPrismaRepository(databaseConnection)
-  const productRepository = new FindProductByConditionPrismaRepository(
+  const findUserByIdRepository = new FindUserByIdPrismaRepository(
     databaseConnection
   )
-  const paymentRepository = new FindPaymentByConditionPrismaRepository(
+  const findProductByConditionRepository =
+    new FindProductByConditionPrismaRepository(databaseConnection)
+  const createOrderItemRepository = new CreateOrderItemPrismaRepository(
     databaseConnection
   )
-  const orderItemRepository = new CreateOrderItemPrismaRepository(
-    databaseConnection
-  )
-  const findOrderItemRepository = new FindOrderItemByConditionPrismaRepository(
-    databaseConnection
-  )
+  const findOrderItemByConditionRepository =
+    new FindOrderItemByConditionPrismaRepository(databaseConnection)
   const findOrderRepository = new FindOrderByIdPrismaRepository(
     databaseConnection,
-    paymentRepository,
-    findOrderItemRepository,
-    productRepository
+    findOrderItemByConditionRepository,
+    findProductByConditionRepository
   )
 
-  const orderRepository = new CreateOrderPrismaRepository(
+  const createOrderRepository = new CreateOrderPrismaRepository(
     databaseConnection,
-    findOrderRepository,
-    paymentRepository
+    findOrderRepository
   )
 
   const createOrderUseCase = new CreateOrderUC(
-    userRepository,
-    productRepository,
-    orderRepository,
-    orderItemRepository,
-    findOrderRepository,
-    paymentRepository
+    findUserByIdRepository,
+    findProductByConditionRepository,
+    createOrderRepository,
+    createOrderItemRepository
   )
   const genericSucessPresenter = new HttpGenericResponse<Order>()
   const createOrderController = new CreateOrderController(
@@ -59,7 +51,7 @@ export const CreateOrderControllerFactory = () => {
 
   return {
     databaseConnection,
-    orderRepository,
+    createOrderRepository,
     createOrderUseCase,
     createOrderController
   }

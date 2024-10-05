@@ -1,4 +1,4 @@
-import { ExpressRouteHttp } from '@main/adapters'
+import { ExpressRouteAdapter } from '@main/adapters'
 import {
   CreateProductControllerFactory,
   FindProductByIdControllerFactory,
@@ -16,9 +16,9 @@ const { findAllProductsController } = FindAllProductsControllerFactory()
 const { updateProductController } = UpdateProductControllerFactory()
 const { deleteProductController } = DeleteProductControllerFactory()
 
-ProductsRoute.post('/', ExpressRouteHttp(createProductController))
-  .get('/:id', ExpressRouteHttp(findProductByIdController))
-  .get('/', ExpressRouteHttp(findAllProductsController))
-  .patch('/:id', ExpressRouteHttp(updateProductController))
-  .put('/:id', ExpressRouteHttp(updateProductController))
-  .delete('/:id', ExpressRouteHttp(deleteProductController))
+ProductsRoute.post('/', ExpressRouteAdapter(createProductController))
+  .get('/:id', ExpressRouteAdapter(findProductByIdController))
+  .get('/', ExpressRouteAdapter(findAllProductsController))
+  .patch('/:id', ExpressRouteAdapter(updateProductController))
+  .put('/:id', ExpressRouteAdapter(updateProductController))
+  .delete('/:id', ExpressRouteAdapter(deleteProductController))

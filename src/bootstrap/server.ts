@@ -1,3 +1,3 @@
-import { SetupFramework } from "@main/framework";
+import { SetupFramework } from '@main/framework'
 
 SetupFramework()

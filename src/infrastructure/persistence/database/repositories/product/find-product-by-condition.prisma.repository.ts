@@ -1,9 +1,11 @@
-import { FindProductByConditionDTO } from '@application/dtos/product/find-product-by-condition.dto'
 import { ProductAndCategoryMap } from '@application/mappers'
 import { FindProductByConditionRepository } from '@application/repositories/product'
+import { ErrorName, StatusCode } from '@common/enums'
+import { FindNotOccurredError } from '@common/errors'
 import { HttpException } from '@common/utils/exceptions'
 import { Product } from '@domain/entities'
-import { StatusCode, ErrorName, ErrorMessage } from '@domain/enums'
+import { Field } from '@domain/enums'
+import { FindProductByCondition } from '@domain/interfaces/product'
 import { DatabaseConnection } from '@infrastructure/persistence/database'
 
 export class FindProductByConditionPrismaRepository
@@ -12,36 +14,32 @@ export class FindProductByConditionPrismaRepository
   constructor(private readonly prisma: DatabaseConnection) {}
 
   async findByCondition(
-    pathParameters: FindProductByConditionDTO
+    pathParameters: FindProductByCondition
   ): Promise<Product[] | null> {
     try {
-      const findProduct = await this.prisma.product.findMany({
-        where: {
-          id: {
-            in: pathParameters.ids
+      const findby = pathParameters.ids
+        ? {
+            id: {
+              in: pathParameters.ids
+            }
           }
-        },
+        : { name: pathParameters.name }
+
+      const findProduct = await this.prisma.product.findMany({
+        where: findby,
         include: { category: true }
       })
 
-      if (!findProduct || findProduct === null) {
-        throw new HttpException(
-          StatusCode.NotFound,
-          ErrorName.NotFoundInformation,
-          ErrorMessage.ProductsNotFound
-        )
-      }
-
-      const formatProductAndCategory = findProduct.map((product) => {
-        return ProductAndCategoryMap.execute(product, product.category)
-      })
-
-      return formatProductAndCategory
+      return !findProduct || findProduct.length === 0
+        ? null
+        : findProduct.map((product) => {
+            return ProductAndCategoryMap.execute(product, product.category)
+          })
     } catch (error) {
       throw new HttpException(
         StatusCode.InternalServerError,
         ErrorName.InternalError,
-        `error: ${error}`
+        FindNotOccurredError(Field.Product)
       )
     }
   }

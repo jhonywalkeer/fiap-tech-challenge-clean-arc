@@ -1,6 +1,6 @@
-import { UpdateCategoryDTO } from '@application/dtos/category'
 import { Category } from '@domain/entities'
+import { UpdateCategory } from '@domain/interfaces/category'
 
 export interface UpdateCategoryUseCase {
-  execute(pathParameters: UpdateCategoryDTO): Promise<Category>
+  execute(payload: UpdateCategory): Promise<Category>
 }

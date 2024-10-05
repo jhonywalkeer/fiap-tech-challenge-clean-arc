@@ -1,6 +1,6 @@
-import express, { Express } from 'express'
 import { DatabaseConnection } from '@infrastructure/persistence/database'
 import { RouterFramework } from '@main/framework'
+import express, { Express } from 'express'
 
 export const SetupFramework = async (): Promise<void> => {
   const port: number = 3000

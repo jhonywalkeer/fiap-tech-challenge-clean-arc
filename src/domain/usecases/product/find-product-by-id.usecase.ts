@@ -1,6 +1,6 @@
-import { FindProductByIdDTO } from '@application/dtos/product'
+import { Identifier } from '@common/interfaces'
 import { Product } from '@domain/entities'
 
 export interface FindProductByIdUseCase {
-  execute(pathParameters: FindProductByIdDTO): Promise<Product | null>
+  execute(pathParameters: Identifier): Promise<Product>
 }

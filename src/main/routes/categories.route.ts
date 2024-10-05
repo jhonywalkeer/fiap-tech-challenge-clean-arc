@@ -1,4 +1,4 @@
-import { ExpressRouteHttp } from '@main/adapters'
+import { ExpressRouteAdapter } from '@main/adapters'
 import {
   CreateCategoryControllerFactory,
   FindCategoryByIdControllerFactory,
@@ -16,9 +16,9 @@ const { findAllCategoriesController } = FindAllCategoriesControllerFactory()
 const { updateCategoryController } = UpdateCategoryControllerFactory()
 const { deleteCategoryController } = DeleteCategoryControllerFactory()
 
-CategoriesRoute.post('/', ExpressRouteHttp(createCategoryController))
-  .get('/:id', ExpressRouteHttp(findCategoryByIdController))
-  .get('/', ExpressRouteHttp(findAllCategoriesController))
-  .patch('/:id', ExpressRouteHttp(updateCategoryController))
-  .put('/:id', ExpressRouteHttp(updateCategoryController))
-  .delete('/:id', ExpressRouteHttp(deleteCategoryController))
+CategoriesRoute.post('/', ExpressRouteAdapter(createCategoryController))
+  .get('/:id', ExpressRouteAdapter(findCategoryByIdController))
+  .get('/', ExpressRouteAdapter(findAllCategoriesController))
+  .patch('/:id', ExpressRouteAdapter(updateCategoryController))
+  .put('/:id', ExpressRouteAdapter(updateCategoryController))
+  .delete('/:id', ExpressRouteAdapter(deleteCategoryController))

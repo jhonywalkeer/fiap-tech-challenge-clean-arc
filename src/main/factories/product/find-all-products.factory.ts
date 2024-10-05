@@ -1,4 +1,5 @@
 import { FindAllProductsUC } from '@application/usecases/product'
+import { PaginateResponse } from '@common/types'
 import { Product } from '@domain/entities'
 import { DatabaseConnection } from '@infrastructure/persistence/database'
 import { FindAllProductsPrismaRepository } from '@infrastructure/persistence/database/repositories/product'
@@ -11,7 +12,9 @@ export const FindAllProductsControllerFactory = () => {
     databaseConnection
   )
   const findAllProductsUseCase = new FindAllProductsUC(productRepository)
-  const genericSucessPresenter = new HttpGenericResponse<Product[]>()
+  const genericSucessPresenter = new HttpGenericResponse<
+    PaginateResponse<Product>
+  >()
   const findAllProductsController = new FindAllProductsController(
     findAllProductsUseCase,
     genericSucessPresenter

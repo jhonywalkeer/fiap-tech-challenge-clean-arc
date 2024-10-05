@@ -47,8 +47,10 @@
     "@typescript-eslint/no-explicit-any": "off",
     "@typescript-eslint/no-var-requires": "off",
     "@typescript-eslint/no-non-null-asserted-optional-chain": "off",
+    "@typescript-eslint/ban-ts-comment": "off", // TODO: enable
     "promise/catch-or-return": "off",
-    "promise/no-callback-in-promise": "off"
+    "promise/no-callback-in-promise": "off",
+    "promise/always-return": "off" // TODO: enable
   },
   "ignorePatterns": [
     "node_modules",

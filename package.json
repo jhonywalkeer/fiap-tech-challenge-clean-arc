@@ -13,6 +13,7 @@
     "prisma:generate-migrations": "npx prisma migrate dev",
     "prisma:apply-migrations": "npx prisma migrate deploy",
     "prisma:generate-erd": "npx prisma generate",
+    "prisma:studio": "npx prisma studio",
     "format:code": "prettier --write && npx prisma format",
     "lint": "npx eslint . --fix",
     "lint:check": "npx eslint .",

@@ -1,6 +1,7 @@
-import { FindAllOrdersDTO } from '@application/dtos/order'
+import { PaginationAndFilter } from '@common/interfaces'
+import { PaginateResponse } from '@common/types'
 import { Order } from '@domain/entities'
 
 export interface FindAllOrdersUseCase {
-  execute(queryParameters: FindAllOrdersDTO): Promise<Order[]>
+  execute(payload: PaginationAndFilter): Promise<PaginateResponse<Order>>
 }

@@ -1,6 +1,6 @@
 import { FindUserByIdDTO } from '@application/dtos/user'
+import { StatusCode } from '@common/enums'
 import { User } from '@domain/entities'
-import { StatusCode } from '@domain/enums'
 import { FindUserByIdUseCase } from '@domain/usecases/user'
 import { Controller } from '@presentation/protocols/controller'
 import { ResponseHandler, HttpRequest } from '@presentation/protocols/http'

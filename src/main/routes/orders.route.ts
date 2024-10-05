@@ -1,4 +1,4 @@
-import { ExpressRouteHttp } from '@main/adapters'
+import { ExpressRouteAdapter } from '@main/adapters'
 import {
   CreateOrderControllerFactory,
   FindOrderByIdControllerFactory,
@@ -16,9 +16,9 @@ const { findAllOrdersController } = FindAllOrdersControllerFactory()
 const { updateOrderController } = UpdateOrderControllerFactory()
 const { deleteOrderController } = DeleteOrderControllerFactory()
 
-OrdersRoute.post('/', ExpressRouteHttp(createOrderController))
-OrdersRoute.get('/:id', ExpressRouteHttp(findOrderByIdController))
-OrdersRoute.get('/', ExpressRouteHttp(findAllOrdersController))
-OrdersRoute.patch('/:id', ExpressRouteHttp(updateOrderController))
-OrdersRoute.put('/:id', ExpressRouteHttp(updateOrderController))
-OrdersRoute.delete('/:id', ExpressRouteHttp(deleteOrderController))
+OrdersRoute.post('/', ExpressRouteAdapter(createOrderController))
+OrdersRoute.get('/:id', ExpressRouteAdapter(findOrderByIdController))
+OrdersRoute.get('/', ExpressRouteAdapter(findAllOrdersController))
+OrdersRoute.patch('/:id', ExpressRouteAdapter(updateOrderController))
+OrdersRoute.put('/:id', ExpressRouteAdapter(updateOrderController))
+OrdersRoute.delete('/:id', ExpressRouteAdapter(deleteOrderController))
