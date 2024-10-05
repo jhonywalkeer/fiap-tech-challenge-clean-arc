@@ -1,6 +1,7 @@
 import { ValidEmails } from '@common/constants'
+import { ErrorName, StatusCode } from '@common/enums'
 import { HttpException } from '@common/utils/exceptions'
-import { StatusCode, ErrorName, ErrorMessage } from '@domain/enums'
+import { ErrorMessage } from '@domain/enums'
 
 export const IsEmailValidator = (value: string): string => {
   const isEmail = value.includes('@')

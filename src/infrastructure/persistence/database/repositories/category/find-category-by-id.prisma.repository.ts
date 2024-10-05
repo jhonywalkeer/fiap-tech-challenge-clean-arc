@@ -1,9 +1,10 @@
-import { FindCategoryByIdDTO } from '@application/dtos/category'
 import { FindCategoryByIdRepository } from '@application/repositories/category'
-import { NotFoundByIdError } from '@common/errors'
+import { ErrorName, StatusCode } from '@common/enums'
+import { FindNotOccurredError } from '@common/errors'
+import { Identifier } from '@common/interfaces'
 import { HttpException } from '@common/utils/exceptions'
 import { Category } from '@domain/entities'
-import { StatusCode, ErrorName, Field } from '@domain/enums'
+import { Field } from '@domain/enums'
 import { DatabaseConnection } from '@infrastructure/persistence/database'
 
 export class FindCategoryByIdPrismaRepository
@@ -11,20 +12,19 @@ export class FindCategoryByIdPrismaRepository
 {
   constructor(private readonly prisma: DatabaseConnection) {}
 
-  async findById(
-    pathParameters: FindCategoryByIdDTO
-  ): Promise<Category | null> {
+  async findById(pathParameters: Identifier): Promise<Category | null> {
     try {
-      return await this.prisma.category.findUnique({
+      const findCategory = await this.prisma.category.findUnique({
         where: {
           id: pathParameters.id
         }
       })
+      return !findCategory ? null : findCategory
     } catch (error) {
       throw new HttpException(
         StatusCode.InternalServerError,
         ErrorName.InternalError,
-        NotFoundByIdError(Field.Category)
+        FindNotOccurredError(Field.Category)
       )
     }
   }

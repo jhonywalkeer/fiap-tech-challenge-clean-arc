@@ -1,6 +1,7 @@
+import { ErrorName, StatusCode } from '@common/enums'
 import { BadRequestError } from '@common/errors'
 import { HttpException } from '@common/utils/exceptions'
-import { StatusCode, ErrorName, Field } from '@domain/enums'
+import { Field } from '@domain/enums'
 import {
   IsStringValidator,
   IsEmailValidator,

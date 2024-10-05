@@ -1,7 +1,6 @@
 import { UpdatePaymentDTO } from '@application/dtos/payment'
-import { HttpException } from '@common/utils/exceptions'
+import { StatusCode } from '@common/enums'
 import { Payment } from '@domain/entities'
-import { StatusCode, ErrorName, ErrorMessage } from '@domain/enums'
 import { UpdatePaymentUseCase } from '@domain/usecases/payment'
 import { Controller } from '@presentation/protocols/controller'
 import { ResponseHandler, HttpRequest } from '@presentation/protocols/http'
@@ -11,22 +10,13 @@ export class UpdatePaymentController implements Controller<Payment> {
     private readonly updatePaymentUC: UpdatePaymentUseCase,
     private readonly updatePaymentPresenter: ResponseHandler<Payment>
   ) {}
-  async handle(pathParameters: HttpRequest) {
-    const { id } = pathParameters.params
-    const { payment_method, amount, status } = pathParameters.body
+  async handle(request: HttpRequest) {
+    const { id } = request.params
+    const { order_id, payment_method, amount, status } = request.body
     const parameters: UpdatePaymentDTO = Object.assign(
-      new UpdatePaymentDTO(id, payment_method, amount, status)
+      new UpdatePaymentDTO(id, order_id, payment_method, amount, status)
     )
-    const payment: Payment | null =
-      await this.updatePaymentUC.execute(parameters)
-
-    if (!payment) {
-      throw new HttpException(
-        StatusCode.NotFound,
-        ErrorName.NotFoundInformation,
-        ErrorMessage.PaymentNotFound
-      )
-    }
+    const payment: Payment = await this.updatePaymentUC.execute(parameters)
 
     return this.updatePaymentPresenter.response(payment, StatusCode.Sucess)
   }

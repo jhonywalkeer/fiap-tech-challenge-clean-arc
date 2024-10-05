@@ -1,5 +1,5 @@
-import { IsStringValidator, IsEnumValidator } from '@presentation/validators'
 import { Field, PaymentMethod } from '@domain/enums'
+import { IsStringValidator, IsEnumValidator } from '@presentation/validators'
 
 export class CreatePaymentMethodDTO {
   method: string

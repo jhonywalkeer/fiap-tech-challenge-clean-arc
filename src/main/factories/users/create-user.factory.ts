@@ -3,7 +3,8 @@ import { User } from '@domain/entities'
 import { DatabaseConnection } from '@infrastructure/persistence/database'
 import {
   CreateUserPrismaRepository,
-  FindUserByIdPrismaRepository
+  FindUserByIdPrismaRepository,
+  FindUserByConditionPrismaRepository
 } from '@infrastructure/persistence/database/repositories/user'
 import { CreateUserController } from '@presentation/controllers/users'
 import { HttpGenericResponse } from '@presentation/protocols/http'
@@ -13,11 +14,15 @@ export const CreateUserControllerFactory = () => {
   const findUserByIdRepository = new FindUserByIdPrismaRepository(
     databaseConnection
   )
+  const findUserByConditionRepository = new FindUserByConditionPrismaRepository(
+    databaseConnection
+  )
   const createUserRepository = new CreateUserPrismaRepository(
     databaseConnection
   )
   const createUserUseCase = new CreateUserUC(
     findUserByIdRepository,
+    findUserByConditionRepository,
     createUserRepository
   )
   const genericSucessPresenter = new HttpGenericResponse<User>()
@@ -28,6 +33,7 @@ export const CreateUserControllerFactory = () => {
 
   return {
     databaseConnection,
+    findUserByConditionRepository,
     findUserByIdRepository,
     createUserRepository,
     createUserUseCase,

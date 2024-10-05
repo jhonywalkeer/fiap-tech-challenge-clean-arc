@@ -1,4 +1,4 @@
-import { ExpressRouteHttp } from '@main/adapters'
+import { ExpressRouteAdapter } from '@main/adapters'
 import {
   CreateUserControllerFactory,
   FindUserByIdControllerFactory,
@@ -12,6 +12,6 @@ const { createUserController } = CreateUserControllerFactory()
 const { findUserByIdController } = FindUserByIdControllerFactory()
 const { findAllUsersController } = FindAllUsersControllerFactory()
 
-UsersRoute.post('/', ExpressRouteHttp(createUserController))
-  .get('/:cpf', ExpressRouteHttp(findUserByIdController))
-  .get('/', ExpressRouteHttp(findAllUsersController))
+UsersRoute.post('/', ExpressRouteAdapter(createUserController))
+  .get('/:cpf', ExpressRouteAdapter(findUserByIdController))
+  .get('/', ExpressRouteAdapter(findAllUsersController))

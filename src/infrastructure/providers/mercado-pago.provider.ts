@@ -1,20 +1,27 @@
-import { MercadoPagoData } from '@common/types/mercado-pago-provider.type'
-import { MercadoPagoClient } from '@infrastructure/config/mercado-pago.config'
+import { MercadoPagoBody, MercadoPagoResponse } from '@common/types'
+import {
+  MercadoPagoClient,
+  MercadoPagoParams
+} from '@infrastructure/config/mercado-pago.config'
 import { Payment } from 'mercadopago'
 
 export class MercadoPagoProvider {
-  public async createPayment(data: MercadoPagoData): Promise<any> {
+  public async createPayment(
+    body: MercadoPagoBody
+  ): Promise<MercadoPagoResponse> {
     const payment = new Payment(MercadoPagoClient)
 
-    return payment.create(data)
+    try {
+      const response = await payment.create({
+        body: body,
+        requestOptions: {
+          idempotencyKey: MercadoPagoParams.options.idempotencyKey
+        }
+      })
+      return response as unknown as MercadoPagoResponse
+    } catch (error) {
+      console.error(error)
+      throw error
+    }
   }
 }
-
-// { body: {
-// 	transaction_amount: 12.34,
-// 	description: '<DESCRIPTION>',
-// 	payment_method_id: '<PAYMENT_METHOD_ID>',
-// 	payer: {
-// 		email: '<EMAIL>'
-// 	},
-// }}

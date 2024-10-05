@@ -1,13 +1,14 @@
 import { EnumValidationMessage } from '@common/constants'
+import { ErrorName, StatusCode } from '@common/enums'
 import { HttpException } from '@common/utils/exceptions'
-import { StatusCode, ErrorName } from '@domain/enums'
 
 export const IsEnumValidator = (
   value: string,
   identifier: any,
   property: string
-): string => {
-  const isEnum = value in identifier
+) => {
+  const isEnum = Object.values(identifier).includes(value)
+
   if (!isEnum) {
     throw new HttpException(
       StatusCode.BadRequest,

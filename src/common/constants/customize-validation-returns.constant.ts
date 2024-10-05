@@ -7,5 +7,5 @@ export const StringValidationMessage = (identifier: string): string => {
 }
 
 export const EnumValidationMessage = (identifier: string): string => {
-  return `Valor da propriedade "${identifier}" informado não é válido`
+  return `Valor da propriedade ${identifier} informado não é válido`
 }

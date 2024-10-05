@@ -1,9 +1,9 @@
 import { UpdateOrderDTO } from '@application/dtos/order'
 import { UpdateOrderRepository } from '@application/repositories/order'
+import { ErrorName, StatusCode } from '@common/enums'
 import { HttpException } from '@common/utils/exceptions'
 import { Order } from '@domain/entities'
-import { StatusCode, ErrorName, ErrorMessage } from '@domain/enums'
-import { PaymentCommunication } from '@infrastructure/gateway/payment'
+import { ErrorMessage } from '@domain/enums'
 import { DatabaseConnection } from '@infrastructure/persistence/database'
 import { FindOrderByIdPrismaRepository } from '@infrastructure/persistence/database/repositories/order'
 
@@ -14,18 +14,10 @@ export class UpdateOrderPrismaRepository implements UpdateOrderRepository {
   ) {}
 
   async update(pathParameters: UpdateOrderDTO): Promise<Order | null> {
-    const QrCode = await PaymentCommunication()
     const findOrder = await this.findOrderById.findById({
       id: pathParameters.id
     })
 
-    if (findOrder === null) {
-      throw new HttpException(
-        StatusCode.NotFound,
-        ErrorName.NotFoundInformation,
-        ErrorMessage.OrderNotFound
-      )
-    }
     const findPayment = await this.prisma.payment.findFirst({
       where: {
         order_id: findOrder?.order
@@ -122,7 +114,7 @@ export class UpdateOrderPrismaRepository implements UpdateOrderRepository {
         amount: updatePayment.amount,
         payment_date: updatePayment.payment_date,
         status: updatePayment.status,
-        qr_code: QrCode
+        qr_code: updatePayment.qr_code
       },
       observation: updateOrder.observation
     }

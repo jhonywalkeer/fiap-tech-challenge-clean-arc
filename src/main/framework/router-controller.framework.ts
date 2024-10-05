@@ -1,13 +1,14 @@
-import { Application } from 'express'
-import { serve, setup } from 'swagger-ui-express'
 import { ExpressRateLimit, SwaggerDocumention } from '@main/framework'
 import {
   CategoriesRoute,
+  HealthCheckRoute,
   ProductsRoute,
   PaymentsRoute,
   OrdersRoute,
   UsersRoute
 } from '@main/routes'
+import { Application } from 'express'
+import { serve, setup } from 'swagger-ui-express'
 
 export const RouterFramework = (app: Application): void => {
   const routes = [
@@ -15,6 +16,11 @@ export const RouterFramework = (app: Application): void => {
       path: '/categories',
       middleware: ExpressRateLimit,
       handler: CategoriesRoute
+    },
+    {
+      path: '/health',
+      middleware: ExpressRateLimit,
+      handler: HealthCheckRoute
     },
     { path: '/products', middleware: ExpressRateLimit, handler: ProductsRoute },
     { path: '/payments', middleware: ExpressRateLimit, handler: PaymentsRoute },

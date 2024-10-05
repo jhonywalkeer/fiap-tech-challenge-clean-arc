@@ -1,5 +1,5 @@
-import { OrderIdentifierGenerator } from '@common/utils/generators'
 import { Letters, Numbers } from '@common/constants'
+import { OrderIdentifierGenerator } from '@common/utils/generators'
 
 describe('[Utils] Order Identifier Generator', () => {
   it('should return a string of length 6', () => {

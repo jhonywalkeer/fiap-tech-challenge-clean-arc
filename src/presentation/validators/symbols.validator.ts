@@ -1,6 +1,7 @@
 import { DangerousPatterns } from '@common/constants'
+import { ErrorName, StatusCode } from '@common/enums'
 import { HttpException } from '@common/utils/exceptions'
-import { StatusCode, ErrorName, ErrorMessage } from '@domain/enums'
+import { ErrorMessage } from '@domain/enums'
 
 export const SymbolsListValidator = (input: string) => {
   for (const pattern of DangerousPatterns) {

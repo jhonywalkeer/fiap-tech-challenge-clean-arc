@@ -1,12 +1,13 @@
-import { UpdateCategoryDTO } from '@application/dtos/category'
 import {
   FindCategoryByIdRepository,
   UpdateCategoryRepository
 } from '@application/repositories/category'
+import { ErrorName, StatusCode } from '@common/enums'
 import { NotFoundByIdError, UpdateNotOccurredError } from '@common/errors'
 import { HttpException } from '@common/utils/exceptions'
 import { Category } from '@domain/entities'
-import { StatusCode, ErrorName, Field } from '@domain/enums'
+import { Field } from '@domain/enums'
+import { UpdateCategory } from '@domain/interfaces/category'
 import { UpdateCategoryUseCase } from '@domain/usecases/category'
 
 export class UpdateCategoryUC implements UpdateCategoryUseCase {
@@ -14,12 +15,10 @@ export class UpdateCategoryUC implements UpdateCategoryUseCase {
     private readonly findCategoryByIdRepository: FindCategoryByIdRepository,
     private readonly updateCategoryRepository: UpdateCategoryRepository
   ) {}
-  async execute(pathParameters: UpdateCategoryDTO): Promise<Category> {
-    const findCategory = await this.findCategoryByIdRepository.findById({
-      id: pathParameters.id
-    })
+  async execute(payload: UpdateCategory): Promise<Category> {
+    const findCategory = await this.findCategoryByIdRepository.findById(payload)
 
-    if (!findCategory || findCategory === null) {
+    if (!findCategory) {
       throw new HttpException(
         StatusCode.NotFound,
         ErrorName.NotFoundInformation,
@@ -28,14 +27,14 @@ export class UpdateCategoryUC implements UpdateCategoryUseCase {
     }
 
     const updateCategory = await this.updateCategoryRepository.update({
-      id: pathParameters.id,
-      name: pathParameters.name ? pathParameters.name : findCategory.name,
-      description: pathParameters.description
-        ? pathParameters.description
+      id: payload.id,
+      name: payload.name ? payload.name : findCategory.name,
+      description: payload.description
+        ? payload.description
         : findCategory.description
     })
 
-    if (!updateCategory || updateCategory === null) {
+    if (!updateCategory) {
       throw new HttpException(
         StatusCode.BadRequest,
         ErrorName.BadRequest,

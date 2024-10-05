@@ -1,29 +1,26 @@
 import { FindAllProductsDTO } from '@application/dtos/product'
-import { HttpException } from '@common/utils/exceptions'
+import { StatusCode } from '@common/enums'
+import { PaginateResponse } from '@common/types'
 import { Product } from '@domain/entities'
-import { StatusCode, ErrorName, ErrorMessage } from '@domain/enums'
 import { FindAllProductsUseCase } from '@domain/usecases/product'
 import { Controller } from '@presentation/protocols/controller'
 import { ResponseHandler, HttpRequest } from '@presentation/protocols/http'
 
-export class FindAllProductsController implements Controller<Product[]> {
+export class FindAllProductsController
+  implements Controller<PaginateResponse<Product>>
+{
   constructor(
     private readonly findAllProductUC: FindAllProductsUseCase,
-    private readonly findAllProductPresenter: ResponseHandler<Product[]>
+    private readonly findAllProductPresenter: ResponseHandler<
+      PaginateResponse<Product>
+    >
   ) {}
-  async handle(queryParameters: HttpRequest) {
-    const { query } = queryParameters
-    const products: Product[] | null = await this.findAllProductUC.execute(
-      Object.assign(new FindAllProductsDTO(query.page, query.limit))
-    )
-
-    if (!products) {
-      throw new HttpException(
-        StatusCode.NotFound,
-        ErrorName.NotFoundInformation,
-        ErrorMessage.ProductsNotFound
+  async handle(request: HttpRequest) {
+    const { query } = request
+    const products: PaginateResponse<Product> =
+      await this.findAllProductUC.execute(
+        Object.assign(new FindAllProductsDTO(query.page, query.limit))
       )
-    }
     return this.findAllProductPresenter.response(products, StatusCode.Sucess)
   }
 }

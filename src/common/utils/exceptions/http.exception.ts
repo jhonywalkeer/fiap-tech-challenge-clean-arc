@@ -1,4 +1,4 @@
-import { StatusCode } from '@domain/enums'
+import { StatusCode } from '@common/enums'
 
 export class HttpException extends Error {
   statusCode: number

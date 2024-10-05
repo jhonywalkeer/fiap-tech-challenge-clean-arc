@@ -1,24 +1,25 @@
-import { CreateCategoryDTO } from '@application/dtos/category'
-import { CreateCategoryRepository } from '@application/repositories/category'
-import { CreateCategoryUseCase } from '@domain/usecases/category'
-import { Category } from '@domain/entities'
-import { FindCategoryByConditionPrismaRepository } from '@infrastructure/persistence/database/repositories/category'
-import { HttpException } from '@common/utils/exceptions'
-import { StatusCode, ErrorName, Field } from '@domain/enums'
+import {
+  CreateCategoryRepository,
+  FindCategoryByConditionRepository
+} from '@application/repositories/category'
+import { ErrorName, StatusCode } from '@common/enums'
 import { ExistsError } from '@common/errors'
+import { HttpException } from '@common/utils/exceptions'
+import { Category } from '@domain/entities'
+import { Field } from '@domain/enums'
+import { CreateCategory } from '@domain/interfaces/category'
+import { CreateCategoryUseCase } from '@domain/usecases/category'
 
 export class CreateCategoryUC implements CreateCategoryUseCase {
   constructor(
-    private readonly findCategoryByConditionRepository: FindCategoryByConditionPrismaRepository,
+    private readonly findCategoryByConditionRepository: FindCategoryByConditionRepository,
     private readonly createCategoryRepository: CreateCategoryRepository
   ) {}
-  async execute(body: CreateCategoryDTO): Promise<Category> {
+  async execute(payload: CreateCategory): Promise<Category> {
     const findCategory =
-      await this.findCategoryByConditionRepository.findByCondition({
-        name: body.name
-      })
+      await this.findCategoryByConditionRepository.findByCondition(payload)
 
-    if (findCategory && findCategory?.length > 0) {
+    if (findCategory) {
       throw new HttpException(
         StatusCode.Conflict,
         ErrorName.ResourceAlreadyExists,
@@ -26,6 +27,6 @@ export class CreateCategoryUC implements CreateCategoryUseCase {
       )
     }
 
-    return await this.createCategoryRepository.create(body)
+    return await this.createCategoryRepository.create(payload)
   }
 }

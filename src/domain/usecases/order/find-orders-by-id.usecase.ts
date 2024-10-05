@@ -1,6 +1,6 @@
-import { FindOrderByIdDTO } from '@application/dtos/order'
+import { Identifier } from '@common/interfaces'
 import { Order } from '@domain/entities'
 
 export interface FindOrderByIdUseCase {
-  execute(pathParameters: FindOrderByIdDTO): Promise<Order | null>
+  execute(pathParameters: Identifier): Promise<Order>
 }

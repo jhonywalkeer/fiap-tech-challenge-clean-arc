@@ -1,4 +1,5 @@
 import { FindAllCategoriesUC } from '@application/usecases/category'
+import { PaginateResponse } from '@common/types'
 import { Category } from '@domain/entities'
 import { DatabaseConnection } from '@infrastructure/persistence/database'
 import { FindAllCategoriesPrismaRepository } from '@infrastructure/persistence/database/repositories/category'
@@ -11,7 +12,9 @@ export const FindAllCategoriesControllerFactory = () => {
     databaseConnection
   )
   const findAllCategoriesUseCase = new FindAllCategoriesUC(categoryRepository)
-  const genericSucessPresenter = new HttpGenericResponse<Category[]>()
+  const genericSucessPresenter = new HttpGenericResponse<
+    PaginateResponse<Category>
+  >()
   const findAllCategoriesController = new FindAllCategoriesController(
     findAllCategoriesUseCase,
     genericSucessPresenter

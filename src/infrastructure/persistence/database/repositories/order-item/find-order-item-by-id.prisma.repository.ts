@@ -1,10 +1,11 @@
-import { FindOrderItemByIdRepository } from '@application/repositories/order-item'
-import { DatabaseConnection } from '@infrastructure/persistence/database'
-import { OrderItem } from '@domain/entities'
 import { FindOrderItemByIdDTO } from '@application/dtos/order-item'
+import { FindOrderItemByIdRepository } from '@application/repositories/order-item'
+import { ErrorName, StatusCode } from '@common/enums'
+import { FindNotOccurredError } from '@common/errors'
 import { HttpException } from '@common/utils/exceptions'
-import { ErrorName, Field, StatusCode } from '@domain/enums'
-import { DeleteNotOccurredExceptionMessage } from '@common/constants'
+import { OrderItem } from '@domain/entities'
+import { Field } from '@domain/enums'
+import { DatabaseConnection } from '@infrastructure/persistence/database'
 
 export class FindOrderItemByIdPrismaRepository
   implements FindOrderItemByIdRepository
@@ -24,7 +25,7 @@ export class FindOrderItemByIdPrismaRepository
       throw new HttpException(
         StatusCode.InternalServerError,
         ErrorName.InternalError,
-        DeleteNotOccurredExceptionMessage(Field.OrderItem)
+        FindNotOccurredError(Field.OrderItem)
       )
     }
   }

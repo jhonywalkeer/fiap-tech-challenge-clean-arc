@@ -1,6 +1,6 @@
 import { StringValidationMessage } from '@common/constants'
+import { ErrorName, StatusCode, Type } from '@common/enums'
 import { HttpException } from '@common/utils/exceptions'
-import { Type, StatusCode, ErrorName } from '@domain/enums'
 
 export const IsStringValidator = (value: any, identifier: string): string => {
   if (typeof value !== Type.string) {

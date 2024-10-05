@@ -36,7 +36,7 @@ model product {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  category   category     @relation(fields: [category_id], references: [id])
+  category   category     @relation(fields: [category_id], references: [id], onDelete: Cascade)
   order_item order_item[]
 }
 
@@ -63,8 +63,8 @@ model order {
   deleted_at  DateTime?
   user_id     String?
 
-  payment payment? @relation(fields: [payment_id], references: [id])
-  user    user?   @relation(fields: [user_id], references: [id])
+  payment payment? @relation(fields: [payment_id], references: [id], onDelete: Cascade)
+  user    user?   @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model order_item {
@@ -78,8 +78,8 @@ model order_item {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  order   order   @relation(fields: [order_id], references: [id])
-  product product @relation(fields: [product_id], references: [id])
+  order   order   @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  product product @relation(fields: [product_id], references: [id], onDelete: Cascade)
 }
 
 model payment {
@@ -92,7 +92,6 @@ model payment {
   created_at     DateTime  @default(now())
   status         String
   qr_code        String?
-  // cart          String?
 
   order order[]
 }

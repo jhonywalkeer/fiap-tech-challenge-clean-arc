@@ -1,6 +1,6 @@
-import { FindUserByIdDTO } from '@application/dtos/user'
 import { User } from '@domain/entities'
+import { FindUserBySocialSecurityNumber } from '@domain/interfaces/user'
 
 export interface FindUserByIdUseCase {
-  execute(queryParameters: FindUserByIdDTO): Promise<User>
+  execute(pathParameters: FindUserBySocialSecurityNumber): Promise<User>
 }
